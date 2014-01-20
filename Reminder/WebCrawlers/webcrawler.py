@@ -1,5 +1,6 @@
-from HttpManager import httpmanager
 import re
+
+from Reminder.HttpManager import httpmanager
 
 
 class WebCrawler:
