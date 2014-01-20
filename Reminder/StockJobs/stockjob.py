@@ -15,7 +15,7 @@ class StockJob:
         if self.webcrawler:
             result = self.webcrawler.search_pattern()
             if result:
-                if self.conditionmanager.is_int_larger_than(result, 169):
+                if self.conditionmanager.is_int_larger_than(result, 180):
                     self.emailmanager.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', result)
 
 sj = StockJob()
