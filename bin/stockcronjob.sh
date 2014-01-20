@@ -1,0 +1,1 @@
+python ../StockJobs/stockjob.py
