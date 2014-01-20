@@ -1,16 +1,3 @@
-import os
-import sys
-
-file_path = os.path.abspath(__file__)
-print(file_path)
-dir_path = os.path.dirname(file_path)
-print(dir_path)
-base_path = os.path.dirname(dir_path)
-print(base_path)
-sys.path.append(base_path)
-sys.path.append(base_path + '/WebCrawlers')
-print(sys.path)
-
 from Reminder.WebCrawlers import webcrawler
 from Reminder.EmailManager import emailmanager
 from Reminder.ConditionManagers import conditionmanager
