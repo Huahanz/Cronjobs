@@ -29,8 +29,10 @@ class StockJob:
 	    curl_url = self.premarket_url
 	elif now > market_close:
 	    print 'using after hours'
-	    curl_url = self.after_hours_url
-	self.daytimewebcrawler = webcrawler.WebCrawler(curl_url, 'qwidget-dollar')
+	else:
+	    print 'normal hours'
+        curl_url = self.after_hours_url
+	self.webcrawler = webcrawler.WebCrawler(curl_url, 'qwidget-dollar')
         self.emailmanager = emailmanager.EmailManager()
         self.conditionmanager = conditionmanager.ConditionManager()
 
