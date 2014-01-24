@@ -9,7 +9,7 @@ import sys
 class StockJob:
     nasdaq_url_prefix = 'http://www.nasdaq.com/symbol/'
     nasdaq_after_hours_suffix = '/after-hours'
-    nasdaq_permarket_suffix = '/premarket'
+    nasdaq_premarket_suffix = '/premarket'
     emailmanager = None
     conditionmanager = None
     def __init__(self):
@@ -27,17 +27,16 @@ class StockJob:
 	if now < premarket_start or now > after_hours_close:
 	    print 'market not open. exit'
 	    sys.exit(0)
-	curl_url = self.nasdaq_url_perfix + stock_obj.symbol 
+	curl_url = self.nasdaq_url_prefix + stock_obj.symbol 
 	if now < market_open:
 	    print 'using premarket'
-	    curl_url += self.nasdaq_permarket_suffix
+	    curl_url += self.nasdaq_premarket_suffix
 	elif now > market_close:
 	    print 'using after hours'
 	    curl_url += self.nasdaq_after_hours_suffix
 	else:
 	    print 'normal hours'
-        webcrawler = webcrawler.WebCrawler(curl_url, stock_obj.pattern)	
-        return webcrawler
+        return webcrawler.WebCrawler(curl_url, stock_obj.pattern)	
 
     def run(self, webcrawler, stock_obj):
         if webcrawler:
@@ -45,16 +44,21 @@ class StockJob:
             if result:
                 if self.conditionmanager.is_int_larger_than(result, stock_obj.max) or self.conditionmanager.is_int_lower_than(result, stock_obj.min):
                     self.emailmanager.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', result)
+		    print 'email sent for : ' + stock_obj.symbol
+		    return True
+		else:
+		    print 'skip sending email for : ' + stock_obj.symbol
+		    return False
 
     def run_list(self):
 	tsla = stockmodel.StockModel('tsla', 'qwidget-dollar', 130, 190)
         yahoo = stockmodel.StockModel('yhoo', 'qwidget-dollar', 35, 45) 
-        bac = models.StockModel('bac', 'qwidget-dollar', 14, 18)
+        bac = stockmodel.StockModel('bac', 'qwidget-dollar', 14, 18)
 	stock_list = [tsla, yahoo, bac] 
 	for stock_obj in stock_list:
 	    webcrawler = self.set_env(stock_obj)
-	    self.run(webcrawler, stock_obj)
-	    	
+	    email_sent = self.run(webcrawler, stock_obj)
+	    
 
 sj = StockJob()
 sj.run_list()
