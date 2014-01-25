@@ -56,7 +56,7 @@ class WebCrawler:
                         break
                     ix += 1
                 num = web_content[m:ix - 1]
-                print 'price ' + num + '\n'
+                print url + 'price ' + num + '\n'
                 start = ix
             else:
                 print 'no match'

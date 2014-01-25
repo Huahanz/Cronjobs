@@ -44,10 +44,10 @@ class StockJob:
             if result:
                 if self.conditionmanager.is_int_larger_than(result, stock_obj.max) or self.conditionmanager.is_int_lower_than(result, stock_obj.min):
                     self.emailmanager.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', result)
-		    print 'email sent for : ' + stock_obj.symbol
+		    print 'email sent for : ' + stock_obj.symbol + ' : price :  ' + result
 		    return True
 		else:
-		    print 'skip sending email for : ' + stock_obj.symbol
+		    print 'skip sending email for : ' + stock_obj.symbol + ' : price : ' + result
 		    return False
 
     def run_list(self):
