@@ -28,11 +28,11 @@ class EmailManager:
         smtpserver.ehlo()
         smtpserver.login(gmail_user, gmail_pwd)
         header = 'To:' + to_addr + '\n' + 'From: ' + gmail_user + '\n' + subject + ' \n'
-        print header
-        msg = header + body
+        msg = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (gmail_user, to_addr, subject, body)
+        print msg
         smtpserver.sendmail(gmail_user, to_addr, msg)
         print 'done!'
         smtpserver.close()
 
-# em = EmailManager()
-# em.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com', 'testemail123', 'test', 'body')
+#em = EmailManager()
+#em.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com', 'testemail123', 'test', 'isss body')
