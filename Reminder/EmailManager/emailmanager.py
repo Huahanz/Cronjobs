@@ -35,4 +35,4 @@ class EmailManager:
         smtpserver.close()
 
 #em = EmailManager()
-#em.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com', 'testemail123', 'test', 'isss body')
+#em.send_email_to_single_address_gmail('6509317719@tmomail.net', 'huahanzh@gmail.com', 'testemail123', 'test', 'isss body')

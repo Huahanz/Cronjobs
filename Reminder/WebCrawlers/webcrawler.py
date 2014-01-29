@@ -21,11 +21,28 @@ class WebCrawler:
         if self.web_content and self.pattern:
             p = re.compile(self.pattern)
             for m in p.finditer(self.web_content):
-                price = self.find_price(m.start() + len(self.pattern))
+                #price = self.find_price(m.start() + len(self.pattern))
+                price = self.find_price_reg(m.start() + len(self.pattern), "[0123456789]*\.[0123456789]*")
                 if price:
                     print price
                     return price
         return 'No match'
+
+    def find_price_reg(self, start_index, price_reg):
+	str = self.web_content[start_index:]
+	print 'finding price : ', str[:20]
+	p = re.compile(price_reg)
+	for m in p.finditer(str):
+	    price = str[m.start():m.end()]
+	    if price:
+	    	return price
+	return 'No match'	
+    
+    def test(self, str, pattern):
+	p = re.compile(pattern)
+	for m in p.finditer(str):
+	    print str[m.start():]
+	    print str[m.start():m.end()]
 
     def find_price(self, start_index):
         while self.web_content[start_index].isdigit() == 0:
@@ -61,3 +78,6 @@ class WebCrawler:
             else:
                 print 'no match'
                 return
+#wc = WebCrawler("http://www.nasdaq.com/symbol/yhoo", "qwidget-dollar")
+#print wc.search_pattern()
+#wc.test("@   \">$34.96</div>", "[0123456789]*\.[0123456789]*")
