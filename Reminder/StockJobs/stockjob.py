@@ -20,7 +20,7 @@ class StockJob:
         time_del = datetime.timedelta(hours=8)
 	now = datetime.datetime.now() - time_del
 	premarket_start = now.replace(hour=2, minute=0, second=0, microsecond=0)
-	market_open = now.replace(hour=6, minute=0, second=0, microsecond=0)
+	market_open = now.replace(hour=6, minute=30, second=0, microsecond=0)
 	market_close = now.replace(hour=13, minute=0, second=0, microsecond=0)
 	after_hours_close = now.replace(hour=17, minute=0, second=0, microsecond=0)
 	print now, '     :        '	
