@@ -43,7 +43,8 @@ class StockJob:
             result = webcrawler.search_pattern()
             if result:
                 if self.conditionmanager.is_int_larger_than(result, stock_obj.max) or self.conditionmanager.is_int_lower_than(result, stock_obj.min):
-                    self.emailmanager.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', result)
+		    body = 'symbol : ' + stock_obj.symbol + ' : price : ' + result
+                    self.emailmanager.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', body)
 		    print 'email sent for : ' + stock_obj.symbol + ' : price :  ' + result
 		    return True
 		else:
@@ -52,8 +53,8 @@ class StockJob:
 
     def run_list(self):
 	tsla = stockmodel.StockModel('tsla', 'qwidget-dollar', 130, 190)
-        yahoo = stockmodel.StockModel('yhoo', 'qwidget-dollar', 35, 45) 
-        bac = stockmodel.StockModel('bac', 'qwidget-dollar', 14, 18)
+        yahoo = stockmodel.StockModel('yhoo', 'qwidget-dollar', 36.9, 45) 
+        bac = stockmodel.StockModel('bac', 'qwidget-dollar', 15, 18)
 	stock_list = [tsla, yahoo, bac] 
 	for stock_obj in stock_list:
 	    webcrawler = self.set_env(stock_obj)
