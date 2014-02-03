@@ -1,5 +1,5 @@
-import MySQLdb as mdb
-import sys
+import MySQLdb
+
 
 class DBWrapper:
     dbcur = None
@@ -8,10 +8,10 @@ class DBWrapper:
         pass
 
     def connect(self):
-        db = mdb.connect(host="127.0.0.1",
+        db = MySQLdb.connect(host="localhost",
                              user="root",
-                             passwd="",
-                             db="PP")
+                             passwd="1234",
+                             db="stock")
 
         cur = db.cursor()
         return cur
@@ -19,16 +19,8 @@ class DBWrapper:
     def exe(self, cmd):
         if not self.dbcur:
             self.dbcur = self.connect()
-        try:
-            self.dbcur.execute(cmd)
-            ret = self.dbcur.fetchall()
-            return ret
-        except mdb.Error, e:
-            print "Error %d: %s" % (e.args[0],e.args[1])
-            sys.exit(1)
-        finally:
-            if self.dbcur:
-                self.dbcur.close()
+        self.dbcur.execute(cmd)
+        return self.dbcur.fetchall()
 
     def select(self, cmd):
         return self.exe(cmd)
@@ -39,5 +31,5 @@ class DBWrapper:
     def update(self, cmd):
         return self.exe(cmd)
 
-# dp = DBWrapper()
-# print dp.select("SELECT * FROM stocks")
+dp = DBWrapper()
+dp.select("SELECT * FROM stocks")
