@@ -10,8 +10,8 @@ class DBWrapper:
     def connect(self):
         db = MySQLdb.connect(host="localhost",
                              user="root",
-                             passwd="",
-                             db="PP")
+                             passwd="1234",
+                             db="stock")
 
         cur = db.cursor()
         return cur
@@ -23,13 +23,13 @@ class DBWrapper:
         return self.dbcur.fetchall()
 
     def select(self, cmd):
-        self.exe(cmd)
+        return self.exe(cmd)
 
     def insert(self, cmd):
-        self.exe(cmd)
+        return self.exe(cmd)
 
     def update(self, cmd):
-        self.exe(cmd)
+        return self.exe(cmd)
 
 dp = DBWrapper()
-dp.select("SELECT * FROM balls")
+dp.select("SELECT * FROM stocks")
