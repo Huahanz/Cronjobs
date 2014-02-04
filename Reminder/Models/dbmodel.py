@@ -16,7 +16,13 @@ class DBModel:
             DBModel.dbconnection.connect()
         data = DBModel.dbconnection.select(cmd)
         print 'data : ', data
-        return self.wrap_to_obj(data)
+	if type(data) is tuple:
+	    ret = []
+	    for entry in data:
+		ret.append(self.wrap_to_obj(entry))
+	    return ret
+	else:
+            return self.wrap_to_obj(data)
 
     def set(self, id, update):
         cmd = 'UPDATE ' + self.table_name + ' Set '

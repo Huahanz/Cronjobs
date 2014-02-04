@@ -1,7 +1,7 @@
 from Reminder.WebCrawlers import webcrawler
 from Reminder.EmailManager import emailmanager
 from Reminder.ConditionManagers import conditionmanager
-from Reminder.Models import stockmodel
+from Reminder.Models import nasdaqstockmodel
 
 import datetime
 import sys
@@ -57,15 +57,20 @@ class StockJob:
 	    print "sent email : " + self.body
     #       self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', body)
 
+    def get_list_from_db(self):
+	model = nasdaqstockmodel.NasdaqStockModel()	
+	return model.get_all()
+	
+    def run_list_from_db(self):
+	stock_list = self.get_list_from_db()
+
     def run_list(self):
-	tsla = stockmodel.StockModel('tsla', 'qwidget-dollar', 170, 190)
-        yahoo = stockmodel.StockModel('yhoo', 'qwidget-dollar', 33.9, 38) 
-        bac = stockmodel.StockModel('bac', 'qwidget-dollar', 15.9, 18)
-	stock_list = [tsla, yahoo, bac] 
+	stock_list = self.get_list_from_db()
 	for stock_obj in stock_list:
 	    webcrawler = self.set_env(stock_obj)
 	    email_sent = self.run(webcrawler, stock_obj)
  	self.wrap_and_send_email()	    
 
 sj = StockJob()
+#sj.run_list()
 sj.run_list()

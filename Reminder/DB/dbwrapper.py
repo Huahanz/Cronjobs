@@ -31,5 +31,3 @@ class DBWrapper:
     def update(self, cmd):
         return self.exe(cmd)
 
-dp = DBWrapper()
-dp.select("SELECT * FROM stocks")

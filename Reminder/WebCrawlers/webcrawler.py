@@ -17,7 +17,6 @@ class WebCrawler:
 
     def search_pattern(self):
         # web_content = self.crawle_url(url)
-        # print web_content + '\n'
         if self.web_content and self.pattern:
             p = re.compile(self.pattern)
             for m in p.finditer(self.web_content):
@@ -25,13 +24,11 @@ class WebCrawler:
                 price = self.find_price_reg(m.start() + len(self.pattern), "\$[0123456789.]*")
                 if price:
 		    price = price[1:]
-                    print price
                     return price
         return 'No match'
 
     def find_price_reg(self, start_index, price_reg):
 	str = self.web_content[start_index:]
-	print 'finding price : ', str[:20]
 	p = re.compile(price_reg)
 	for m in p.finditer(str):
 	    price = str[m.start():m.end()]
@@ -64,7 +61,6 @@ class WebCrawler:
         while 1:
             m = web_content.find(needle, start)
             if m:
-                print m
                 m += len(needle)
                 while web_content[m].isdigit() == 0:
                     m += 1
