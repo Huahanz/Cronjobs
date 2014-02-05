@@ -21,6 +21,10 @@ class StockJob:
     def set_env(self, stock_obj):
         time_del = datetime.timedelta(hours=8)
 	now = datetime.datetime.now() - time_del
+	weekday = now.weekday()
+	if weekday == 5 or weekday == 6:
+	      print 'market close during weekend'
+	      sys.exit(0)
 	premarket_start = now.replace(hour=2, minute=0, second=0, microsecond=0)
 	market_open = now.replace(hour=6, minute=30, second=0, microsecond=0)
 	market_close = now.replace(hour=13, minute=0, second=0, microsecond=0)
