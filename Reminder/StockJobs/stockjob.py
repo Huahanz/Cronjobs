@@ -29,19 +29,19 @@ class StockJob:
         market_open = now.replace(hour=6, minute=30, second=0, microsecond=0)
         market_close = now.replace(hour=13, minute=0, second=0, microsecond=0)
         after_hours_close = now.replace(hour=17, minute=0, second=0, microsecond=0)
-        print now, '     :        '
+        print now, ':', 
         if now < premarket_start or now > after_hours_close:
             print 'market not open. exit'
             sys.exit(0)
         curl_url = self.nasdaq_url_prefix + stock_obj.symbol
         if now < market_open:
-            print 'using premarket'
+            print 'using premarket', 
             curl_url += self.nasdaq_premarket_suffix
         elif now > market_close:
-            print 'using after hours'
+            print 'using after hours', 
             curl_url += self.nasdaq_after_hours_suffix
         else:
-            print 'normal hours'
+            print 'normal hours', 
         return webcrawler.WebCrawler(curl_url, stock_obj.pattern)
 
     def run(self, webcrawler, stock_obj):
@@ -51,16 +51,17 @@ class StockJob:
                 if self.conditionmanager.is_larger_than(result, stock_obj.max) or self.conditionmanager.is_lower_than(
                         result, stock_obj.min):
                     self.body += 'symbol : ' + stock_obj.symbol + ' : price : ' + result + '<br>'
+		    print ':SEND_EMAIL:' + stock_obj.symbol.upper() + ':' + result
                     return True
                 else:
-                    print 'skip sending email for : ' + stock_obj.symbol + ' : price : ' + result
+                    print ':SKIP:' + stock_obj.symbol.upper() + ':' + result
                     return False
 
     def wrap_and_send_email(self):
         if len(self.body) > 0:
             self.emailmanager.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com',
                                                                  'testemail123', 'alert from nasdaq stock', self.body)
-            print "sent email : " + self.body
+#            print "sent email : " + self.body
 
             #       self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', body)
 
@@ -79,26 +80,37 @@ class StockJob:
     def run_earning_calander(self):
         ec_url_prefix = 'http://biz.yahoo.com/research/earncal/'
         now = self.get_now()
-        ec_url_date = str(now.year)
-        ec_url_date += str(now.month)
-        ec_url_date += str(now.day)
+        ec_url_date = self.date_format_pad_zero(now.year) + self.date_format_pad_zero(now.month) + self.date_format_pad_zero(now.day)
         url = ec_url_prefix + ec_url_date + '.html'
-        pattern = '<a href="http://finance.yahoo.com/q?s='
+        pattern = "finance.yahoo.com\/q\?s="
+	print 'url' + url
         wc = webcrawler.WebCrawler(url, pattern)
         stock_list = self.get_list_from_db()
         reg_list = []
         for stock_obj in stock_list:
-            reg_list.append(stock_obj.symbol)
-            matches = wc.search_pattern_follow_reg_list(reg_list)
-            if matches:
-                self.body += 'Earning report found : '
-                self.body.join(matches)
-                self.wrap_and_send_email()
+	    symbol = self.get_earning_calaander_reg(stock_obj.symbol)
+            reg_list.append(symbol)
+        matches = wc.search_pattern_follow_reg_list(reg_list)
+        if matches:
+            self.body += 'Earning report found : '
+            self.body = self.body.join(matches)
+            self.wrap_and_send_email()
+
+    def date_format_pad_zero(self, val) :
+	if val <= 0:
+	    print 'invalid date val ' + str(val)
+	    sys.exit(1)
+	if val < 10:
+	    return '0' + str(val)
+	return str(val)
+
+    def get_earning_calaander_reg(self, symbol):
+	return symbol.upper()
 
     def check_and_run_earning_calander(self):
         now = self.get_now()
-        # if now.hour == 6 and now.minute == 1:
-        self.run_earning_calander()
+        if now.hour == 6 and now.minute == 1:
+            self.run_earning_calander()
 
     def get_now(self):
         time_del = datetime.timedelta(hours=8)
@@ -107,5 +119,5 @@ class StockJob:
 
 sj = StockJob()
 #sj.run_list()
-# sj.run_list()
+sj.run_list()
 sj.check_and_run_earning_calander()

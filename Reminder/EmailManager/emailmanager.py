@@ -29,7 +29,7 @@ class EmailManager:
         smtpserver.login(gmail_user, gmail_pwd)
         header = 'To:' + to_addr + '\n' + 'From: ' + gmail_user + '\n' + subject + ' \n'
         msg = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (gmail_user, to_addr, subject, body)
-        print msg
+#        print msg
         smtpserver.sendmail(gmail_user, to_addr, msg)
         print 'done!'
         smtpserver.close()

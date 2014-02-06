@@ -29,18 +29,17 @@ class WebCrawler:
 
     def search_pattern_follow_reg_list(self, reg_list):
         rets = []
-        print ''.join(reg_list)
         if self.web_content and self.pattern:
             p = re.compile(self.pattern)
             for m in p.finditer(self.web_content):
                 match = self.find_reg_list(m.start() + len(self.pattern), reg_list)
-                print match
                 if match:
                     rets.append(match[1:])
         return rets
 
     def find_reg(self, start_index, reg):
         str = self.web_content[start_index:]
+	#print 'rr ', reg, str[:100]
         p = re.compile(reg)
         for m in p.finditer(str):
             match = str[m.start():m.end()]
