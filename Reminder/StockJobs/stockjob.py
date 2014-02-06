@@ -20,8 +20,7 @@ class StockJob:
         self.conditionmanager = conditionmanager.ConditionManager()
 
     def set_env(self, stock_obj):
-        time_del = datetime.timedelta(hours=8)
-        now = datetime.datetime.now() - time_del
+        now = self.get_now()
         weekday = now.weekday()
         if weekday == 5 or weekday == 6:
             print 'market close during weekend'
@@ -47,7 +46,7 @@ class StockJob:
 
     def run(self, webcrawler, stock_obj):
         if webcrawler:
-            result = webcrawler.search_pattern()
+            result = webcrawler.search_pattern_follow_reg("\$[0123456789.]*")
             if result:
                 if self.conditionmanager.is_larger_than(result, stock_obj.max) or self.conditionmanager.is_lower_than(
                         result, stock_obj.min):
@@ -63,14 +62,11 @@ class StockJob:
                                                                  'testemail123', 'alert from nasdaq stock', self.body)
             print "sent email : " + self.body
 
-        #       self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', body)
+            #       self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', body)
 
     def get_list_from_db(self):
         model = nasdaqstockmodel.NasdaqStockModel()
         return model.get_all()
-
-    def run_list_from_db(self):
-        stock_list = self.get_list_from_db()
 
     def run_list(self):
         stock_list = self.get_list_from_db()
@@ -80,6 +76,36 @@ class StockJob:
         self.wrap_and_send_email()
 
 
+    def run_earning_calander(self):
+        ec_url_prefix = 'http://biz.yahoo.com/research/earncal/'
+        now = self.get_now()
+        ec_url_date = str(now.year)
+        ec_url_date += str(now.month)
+        ec_url_date += str(now.day)
+        url = ec_url_prefix + ec_url_date + '.html'
+        pattern = '<a href="http://finance.yahoo.com/q?s='
+        wc = webcrawler.WebCrawler(url, pattern)
+        stock_list = self.get_list_from_db()
+        reg_list = []
+        for stock_obj in stock_list:
+            reg_list.append(stock_obj.symbol)
+            matches = wc.search_pattern_follow_reg_list(reg_list)
+            if matches:
+                self.body += 'Earning report found : '
+                self.body.join(matches)
+                self.wrap_and_send_email()
+
+    def check_and_run_earning_calander(self):
+        now = self.get_now()
+        # if now.hour == 6 and now.minute == 1:
+        self.run_earning_calander()
+
+    def get_now(self):
+        time_del = datetime.timedelta(hours=8)
+        return datetime.datetime.now() - time_del
+
+
 sj = StockJob()
 #sj.run_list()
-sj.run_list()
+# sj.run_list()
+sj.check_and_run_earning_calander()
