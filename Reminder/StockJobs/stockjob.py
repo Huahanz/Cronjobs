@@ -2,6 +2,7 @@ from Reminder.WebCrawlers import webcrawler
 from Reminder.EmailManager import emailmanager
 from Reminder.ConditionManagers import conditionmanager
 from Reminder.Models import nasdaqstockmodel
+from Reminder.Models import stockdatamodel
 
 import datetime
 import sys
@@ -32,7 +33,7 @@ class StockJob:
         print now, ':', 
         if now < premarket_start or now > after_hours_close:
             print 'market not open. exit'
-            sys.exit(0)
+        #    sys.exit(0)
         curl_url = self.nasdaq_url_prefix + stock_obj.symbol
         if now < market_open:
             print 'using premarket', 
@@ -48,6 +49,7 @@ class StockJob:
         if webcrawler:
             result = webcrawler.search_pattern_follow_reg("\$[0123456789.]*")
             if result:
+                self.update_stock_data(stock_obj.symbol, result, 0)
                 if self.conditionmanager.is_larger_than(result, stock_obj.max) or self.conditionmanager.is_lower_than(
                         result, stock_obj.min):
                     self.body += 'symbol : ' + stock_obj.symbol + ' : price : ' + result + '<br>'
@@ -116,8 +118,13 @@ class StockJob:
         time_del = datetime.timedelta(hours=8)
         return datetime.datetime.now() - time_del
 
+    def update_stock_data(self, symbol, price, vol):
+	sdmodel = stockdatamodel.StockDataModel()
+	sdmodel.update(symbol, price, vol)
+	return
 
 sj = StockJob()
 #sj.run_list()
 sj.run_list()
 sj.check_and_run_earning_calander()
+print '======================='
