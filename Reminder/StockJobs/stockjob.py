@@ -33,7 +33,7 @@ class StockJob:
         print now, ':', 
         if now < premarket_start or now > after_hours_close:
             print 'market not open. exit'
-        #    sys.exit(0)
+            sys.exit(0)
         curl_url = self.nasdaq_url_prefix + stock_obj.symbol
         if now < market_open:
             print 'using premarket', 
@@ -122,6 +122,9 @@ class StockJob:
 	sdmodel = stockdatamodel.StockDataModel()
 	sdmodel.update(symbol, price, vol)
 	return
+
+    def get_watch_list(self):
+	return ['TSLA', 'YHOO', 'MSFT', 'LNKD', 'BAC', 'AVTI', 'TWTR', 'YELP', 'ZNGA', 'STEM', 'SCTY', 'SNTS', 'RMTI', 'RAD', 'RENN', 'SOL', 'RSOL', 'PSX', 'OXY', 'NOK', 'NFLX', 'NBG', 'NQ', 'IXIC', 'MCP', 'MPO', 'MCK', 'MNKD', 'JASO', 'JCP', 'HZNP', 'HIMX', 'GOOG', 'GE', 'GME', 'FRO', 'FSLR', 'FNMA', 'FMCC', 'FB', 'DANG', 'DRYS', 'SID', 'BBRY', 'BIDU', 'ABIO', 'AAPL', 'AMGN', 'AGNC', 'APP', 'AMZN', 'ANR', 'AMD', 'AVTC', 'WUBA']	
 
 sj = StockJob()
 #sj.run_list()
