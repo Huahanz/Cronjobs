@@ -1,5 +1,4 @@
 class ConditionManager:
-
     def __init__(self):
         return
 
@@ -7,15 +6,15 @@ class ConditionManager:
         return expr == 1
 
     def is_larger_than(self, num, base):
-	try:
-	    num_f = float(num)
-	    base_f = float(base)
-	except ValueError:
-	    return False
-	return num_f > base_f
-    
+        try:
+            num_f = float(num)
+            base_f = float(base)
+        except ValueError:
+            return False
+        return num_f > base_f
+
     def is_lower_than(self, num, base):
-	try:
+        try:
             num_f = float(num)
             base_f = float(base)
         except ValueError:
