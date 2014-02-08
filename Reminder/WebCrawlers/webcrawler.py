@@ -39,7 +39,7 @@ class WebCrawler:
 
     def find_reg(self, start_index, reg):
         str = self.web_content[start_index:]
-	#print 'rr ', reg, str[:100]
+        #print 'rr ', reg, str[:100]
         p = re.compile(reg)
         for m in p.finditer(str):
             match = str[m.start():m.end()]
