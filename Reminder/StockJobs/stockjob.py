@@ -3,6 +3,7 @@ from Reminder.EmailManager import emailmanager
 from Reminder.ConditionManagers import conditionmanager
 from Reminder.Models import nasdaqstockmodel
 from Reminder.Models import stockdatamodel
+from random import randint
 
 import datetime
 import sys
@@ -52,6 +53,8 @@ class StockJob:
                 self.update_stock_data(stock_obj.symbol, result, 0)
                 if self.conditionmanager.is_larger_than(result, stock_obj.max) or self.conditionmanager.is_lower_than(
                         result, stock_obj.min):
+		    if not self.is_price_valid(stock_obj.symbol, result):
+			return False
                     self.body += 'symbol : ' + stock_obj.symbol + ' : price : ' + result + '<br>'
                     print ':SEND_EMAIL:' + stock_obj.symbol.upper() + ':' + result
                     return True
@@ -59,13 +62,20 @@ class StockJob:
                     print ':SKIP:' + stock_obj.symbol.upper() + ':' + result
                     return False
 
+    def is_price_valid(self, symbol, new_price):
+        sdmodel = stockdatamodel.StockDataModel()
+	price = int(sdmodel.get_price_by_symbol(symbol))
+	new_price = int(new_price)
+	is_valid = (new_price > price * 0.5) and (new_price < price * 2)
+	print 'checking price ', price , ' valid : ', is_valid
+	return is_valid	
+
     def wrap_and_send_email(self):
         if len(self.body) > 0:
-            self.emailmanager.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com',
-                                                                 'testemail123', 'alert from nasdaq stock', self.body)
-            #            print "sent email : " + self.body
-
-            #       self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', body)
+            self.emailmanager.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com', 'testemail123', 'alert from nasdaq stock', self.body)
+            num = randint(1, 100)
+	    if num < 33 :		
+            	self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', body)
 
     def get_list_from_db(self):
         model = nasdaqstockmodel.NasdaqStockModel()
@@ -78,7 +88,6 @@ class StockJob:
             email_sent = self.run(webcrawler, stock_obj)
         self.wrap_and_send_email()
 
-
     def run_earning_calander(self):
         ec_url_prefix = 'http://biz.yahoo.com/research/earncal/'
         now = self.get_now()
@@ -88,10 +97,10 @@ class StockJob:
         pattern = "finance.yahoo.com\/q\?s="
         print 'url' + url
         wc = webcrawler.WebCrawler(url, pattern)
-        stock_list = self.get_list_from_db()
+	stock_list = self.get_watch_list()
         reg_list = []
-        for stock_obj in stock_list:
-            symbol = self.get_earning_calaander_reg(stock_obj.symbol)
+        for symbol in stock_list:
+            symbol = self.get_earning_calaander_reg(symbole)
             reg_list.append(symbol)
         matches = wc.search_pattern_follow_reg_list(reg_list)
         if matches:
@@ -138,7 +147,6 @@ class StockJob:
 	    
 
 sj = StockJob()
-#sj.run_list()
 sj.run_list()
 sj.check_and_run_earning_calander()
 print '======================='
