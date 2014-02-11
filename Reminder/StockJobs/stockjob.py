@@ -131,6 +131,11 @@ class StockJob:
                 'DRYS', 'SID', 'BBRY', 'BIDU', 'ABIO', 'AAPL', 'AMGN', 'AGNC', 'APP', 'AMZN', 'ANR', 'AMD', 'AVTC',
                 'WUBA']
 
+    def search_watch_list(self):
+	for symbol in self.get_watch_list():
+	    sdmodel = stockdatamodel.StockDataModel()
+	    price = sdmodel.get_price_by_symbol(symbol)
+	    
 
 sj = StockJob()
 #sj.run_list()
