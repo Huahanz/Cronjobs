@@ -8,4 +8,5 @@ class StockData:
 	self.id = id
         self.symbol = symbol
         self.price = price
-        self.vol = vol
+	self.vol = vol
+
