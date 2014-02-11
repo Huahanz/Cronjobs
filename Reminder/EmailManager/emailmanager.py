@@ -33,5 +33,9 @@ class EmailManager:
         print 'done!'
         smtpserver.close()
 
+    def send_to_defaults(self, subject, body):
+	self.send_email_to_single_address_gmail('nasdaqstock.cronjobs@gmail.com', 'nasdaqstock.cronjobs@gmail.com', 'testemail123', subject, body)
+	self.send_email_to_single_address_gmail('huahanzh@gmail.com', 'nasdaqstock.cronjobs@gmail.com', 'testemail123', subject, body)
+
 #em = EmailManager()
 #em.send_email_to_single_address_gmail('6509317719@tmomail.net', 'huahanzh@gmail.com', 'testemail123', 'test', 'isss body')

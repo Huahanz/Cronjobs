@@ -64,18 +64,21 @@ class StockJob:
 
     def is_price_valid(self, symbol, new_price):
         sdmodel = stockdatamodel.StockDataModel()
-	price = int(sdmodel.get_price_by_symbol(symbol))
-	new_price = int(new_price)
+	price = self.parse_to_int(sdmodel.get_price_by_symbol(symbol))
+	new_price = self.parse_to_int(new_price)
 	is_valid = (new_price > price * 0.5) and (new_price < price * 2)
 	print 'checking price ', price , ' valid : ', is_valid
 	return is_valid	
 
+    def parse_to_int(self, val):
+        return round(float(val))
+
     def wrap_and_send_email(self):
         if len(self.body) > 0:
-            self.emailmanager.send_email_to_single_address_gmail('huahanzh@gmail.com', 'huahanzh@gmail.com', 'testemail123', 'alert from nasdaq stock', self.body)
+	    self.emailmanager.send_to_defaults('Stock Alert', self.body)
             num = randint(1, 100)
 	    if num < 33 :		
-            	self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', body)
+            	self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', self.body)
 
     def get_list_from_db(self):
         model = nasdaqstockmodel.NasdaqStockModel()
