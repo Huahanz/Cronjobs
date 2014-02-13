@@ -6,11 +6,11 @@ class StockDataModel(DBModel):
     table_name = 'stockdata'
     #schema = {'id': 'int', 'symbol': 'string', 'price': 'float', 'vol': 'int'}
     schema = [
-	['id', 'int'], 
-	['symbol', 'string'],
-	['price', 'float'], 
-	['vol', 'int']
-	]    
+        ['id', 'int'],
+        ['symbol', 'string'],
+        ['price', 'float'],
+        ['vol', 'int']
+    ]
 
     def __init__(self):
         DBModel.__init__(self, self.table_name)
@@ -19,19 +19,19 @@ class StockDataModel(DBModel):
         return DBModel.get(self, id)
 
     def save(self, obj):
-	return DBModel.save(self, obj)
+        return DBModel.save(self, obj)
 
     def update(self, symbol, price, vol):
-	id = self.generate_id(symbol)
-	obj = StockData(id, symbol, price, vol)
-	self.save(obj)	
-	
+        id = self.generate_id(symbol)
+        obj = StockData(id, symbol, price, vol)
+        self.save(obj)
+
     def generate_id(self, symbol):
-	id = 0
-	for c in symbol:
-	    id += (ord(c) - 97)
-	    id *= 26
-	return id
+        id = 0
+        for c in symbol:
+            id += (ord(c) - 97)
+            id *= 26
+        return id
 
     def wrap_to_obj(self, data):
         if len(data) != len(self.schema):
