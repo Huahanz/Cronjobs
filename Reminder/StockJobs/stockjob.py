@@ -78,7 +78,8 @@ class StockJob:
 	    self.emailmanager.send_to_defaults('Stock Alert', self.body)
             num = randint(1, 100)
 	    if num < 33 :		
-            	self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', self.body)
+		pass
+        #    	self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', self.body)
 
     def get_list_from_db(self):
         model = nasdaqstockmodel.NasdaqStockModel()
