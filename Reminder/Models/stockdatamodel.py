@@ -39,8 +39,18 @@ class StockDataModel(DBModel):
             return None
         return StockData(data[0], data[1], data[2], data[3])
 
+    def get_price_by_symbol(self, symbol):
+	id = self.generate_id(symbol)
+	entry = self.get(id)
+	if isinstance(entry, (list, tuple)):
+	    entry = entry[0]
+	if entry:
+	    return entry.price
+	else:
+	    return None
+
 #sd = StockDataModel()
-#print ''.join(sd.get(None))
+#print ''.join(sd.get(None)
 #sx = StockData(1, 'yelp', 100, 100000)
 #sd.save(sx)
 #print ''.join(sd.get(None))
