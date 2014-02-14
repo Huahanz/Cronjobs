@@ -1,6 +1,7 @@
 from Reminder.WebCrawlers import webcrawler
 from Reminder.EmailManager import emailmanager
 from Reminder.ConditionManagers import conditionmanager
+from Reminder.ConditionManagers import stockconditionmanager
 from Reminder.Models import nasdaqstockmodel
 from Reminder.Models import stockdatamodel
 from random import randint
@@ -53,8 +54,8 @@ class StockJob:
                 self.update_stock_data(stock_obj.symbol, result, 0)
                 if self.conditionmanager.is_larger_than(result, stock_obj.max) or self.conditionmanager.is_lower_than(
                         result, stock_obj.min):
-		    if not self.is_price_valid(stock_obj.symbol, result):
-			return False
+                    if not self.is_price_valid(stock_obj.symbol, result):
+                        return False
                     self.body += 'symbol : ' + stock_obj.symbol + ' : price : ' + result + '<br>'
                     print ':SEND_EMAIL:' + stock_obj.symbol.upper() + ':' + result
                     return True
@@ -64,22 +65,22 @@ class StockJob:
 
     def is_price_valid(self, symbol, new_price):
         sdmodel = stockdatamodel.StockDataModel()
-	price = self.parse_to_int(sdmodel.get_price_by_symbol(symbol))
-	new_price = self.parse_to_int(new_price)
-	is_valid = (new_price > price * 0.5) and (new_price < price * 2)
-	print 'checking price ', price , ' valid : ', is_valid
-	return is_valid	
+        price = self.parse_to_int(sdmodel.get_price_by_symbol(symbol))
+        new_price = self.parse_to_int(new_price)
+        is_valid = (new_price > price * 0.5) and (new_price < price * 2)
+        print 'checking price ', price, ' valid : ', is_valid
+        return is_valid
 
     def parse_to_int(self, val):
         return round(float(val))
 
     def wrap_and_send_email(self):
         if len(self.body) > 0:
-	    self.emailmanager.send_to_defaults('Stock Alert', self.body)
+            self.emailmanager.send_to_defaults('Stock Alert', self.body)
             num = randint(1, 100)
-	    if num < 33 :		
-		pass
-        #    	self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', self.body)
+            if num < 33:
+                pass
+                #    	self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', self.body)
 
     def get_list_from_db(self):
         model = nasdaqstockmodel.NasdaqStockModel()
@@ -101,10 +102,10 @@ class StockJob:
         pattern = "finance.yahoo.com\/q\?s="
         print 'url' + url
         wc = webcrawler.WebCrawler(url, pattern)
-	stock_list = self.get_watch_list()
+        stock_list = self.get_watch_list()
         reg_list = []
         for symbol in stock_list:
-            symbol = self.get_earning_calaander_reg(symbole)
+            symbol = self.get_earning_calaander_reg(symbol)
             reg_list.append(symbol)
         matches = wc.search_pattern_follow_reg_list(reg_list)
         if matches:
@@ -145,10 +146,14 @@ class StockJob:
                 'WUBA']
 
     def search_watch_list(self):
-	for symbol in self.get_watch_list():
-	    sdmodel = stockdatamodel.StockDataModel()
-	    price = sdmodel.get_price_by_symbol(symbol)
-	    
+        for symbol in self.get_watch_list():
+            sdmodel = stockdatamodel.StockDataModel()
+            price = sdmodel.get_price_by_symbol(symbol)
+
+    # def run_by_watch_list(self):
+    #     watch_list = self.get_watch_list()
+    #     for symbol in watch_list:
+
 
 sj = StockJob()
 sj.run_list()

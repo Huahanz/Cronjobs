@@ -12,16 +12,16 @@ class DBModel:
         cmd = 'SELECT * FROM ' + self.table_name
         if id:
             cmd += ' WHERE id = ' + str(id)
-#	print 'cmd', cmd
+        #	print 'cmd', cmd
         if not DBModel.dbconnection:
             DBModel.dbconnection = DBWrapper()
             DBModel.dbconnection.connect()
         data = DBModel.dbconnection.select(cmd)
-       # print 'data : ', data
+        # print 'data : ', data
         if type(data) is tuple:
             ret = []
             for entry in data:
-	#	print 'entry ' , entry
+            #	print 'entry ' , entry
                 ret.append(self.wrap_to_obj(entry))
             return ret
         else:
@@ -51,7 +51,7 @@ class DBModel:
                 DBModel.dbconnection = DBWrapper()
                 DBModel.dbconnection.connect()
             ret = DBModel.dbconnection.insert(cmd)
- #           print '#', ret
+            #           print '#', ret
             return ret
         return None
 
@@ -64,9 +64,6 @@ class DBModel:
                 return self.add(obj)
             else:
                 return self.set(obj)
-
-    def get_id():
-        pass
 
     def wrap_to_obj(self, data):
         pass
