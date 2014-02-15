@@ -14,7 +14,4 @@ class StockConditionManager(conditionmanager.ConditionManager):
         return False
 
     def does_basic_match(self, price, min, max):
-        return conditionmanager.ConditionManager.is_larger_than(price, max) or conditionmanager.ConditionManager.is_lower_than(
-                        price, min)
-
-
+        return conditionmanager.ConditionManager.is_larger_than(price, max) or conditionmanager.ConditionManager.is_lower_than(price, min)

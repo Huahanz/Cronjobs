@@ -16,5 +16,6 @@ id int(11) NOT NULL,
 symbol varchar(255) NOT NULL, 
 price float(11) DEFAULT 0, 
 vol int(11) DEFAULT 0, 
+price_data text DEFAULT 0,
 PRIMARY KEY (id)
 );

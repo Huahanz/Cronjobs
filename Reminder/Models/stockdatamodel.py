@@ -1,6 +1,6 @@
 from Reminder.Models.StockData import StockData
 from Reminder.Models.dbmodel import DBModel
-
+import json
 
 class StockDataModel(DBModel):
     table_name = 'stockdata'
@@ -9,21 +9,34 @@ class StockDataModel(DBModel):
         ['id', 'int'],
         ['symbol', 'string'],
         ['price', 'float'],
-        ['vol', 'int']
+        ['vol', 'int'],
+        ['price_data', 'string'],
     ]
+
+    json_field = 'price_data'
 
     def __init__(self):
         DBModel.__init__(self, self.table_name)
 
     def get(self, id, offset=None, limit=None):
-        return DBModel.get(self, id)
+        obj = DBModel.get(self, id)
+        obj.price_data = json.dump(obj.price_data)
+        return obj
 
     def save(self, obj):
+        obj.price_data = json.loads(obj.price_data)
         return DBModel.save(self, obj)
 
     def update(self, symbol, price, vol):
         id = self.generate_id(symbol)
-        obj = StockData(id, symbol, price, vol)
+        price_data = []
+        obj = self.get(id)
+        if obj:
+            print 'debug ', json.dump(price_data)
+            price_data.append(price)
+            obj.price_data = price_data
+        else:
+            obj = StockData(id, symbol, price, vol, price_data)
         self.save(obj)
 
     def generate_id(self, symbol):
@@ -37,7 +50,7 @@ class StockDataModel(DBModel):
         if len(data) != len(self.schema):
             print 'invalid data format'
             return None
-        return StockData(data[0], data[1], data[2], data[3])
+        return StockData(data[0], data[1], data[2], data[3], data[4])
 
     def get_price_by_symbol(self, symbol):
         id = self.generate_id(symbol)
