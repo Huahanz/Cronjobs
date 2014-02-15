@@ -1,6 +1,6 @@
 import BaseObject
 
-class StockData(BaseObject):
+class StockData(BaseObject.BaseObject):
     id = None
     symbol = None
     price = 0
@@ -11,7 +11,7 @@ class StockData(BaseObject):
         self.symbol = symbol
         self.price = price
         self.vol = vol
-        BaseObject.BaseObject.__init__()
+        BaseObject.BaseObject.__init__(self)
 
     def generate_id(self):
         id = 0

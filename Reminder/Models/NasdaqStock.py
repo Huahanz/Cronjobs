@@ -1,6 +1,6 @@
 import BaseObject
 
-class NasdaqStock(BaseObject):
+class NasdaqStock(BaseObject.BaseObject):
     id = None
     symbol = None
     pattern = None
@@ -13,7 +13,7 @@ class NasdaqStock(BaseObject):
         self.pattern = pattern
         self.min = min
         self.max = max
-        BaseObject.BaseObject.__init__()
+        BaseObject.BaseObject.__init__(self)
 
     def generate_id(self):
         id = 0

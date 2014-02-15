@@ -125,7 +125,7 @@ class StockJob:
         scm = stockconditionmanager.StockConditionManager()
 
         for symbol in watch_list:
-            url = self.nasdaq_premarket_suffix + symbol.lower() + self.url_suffix
+            url = self.nasdaq_url_prefix + symbol.lower() + self.url_suffix
             result = wc.search_pattern_follow_reg(url, self.nasdaq_pattern, "\$[0123456789.]*")
             if result:
                 self.update_stock_data(symbol, result, 0)
