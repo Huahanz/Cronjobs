@@ -32,7 +32,7 @@ class StockJob:
         print now, ':',
         if now < premarket_start or now > after_hours_close:
             print 'market not open. exit'
-            sys.exit(0)
+   #         sys.exit(0)
         if now < market_open:
             print 'using premarket',
             self.url_suffix = self.nasdaq_premarket_suffix
@@ -42,14 +42,18 @@ class StockJob:
         else:
             print 'normal hours',
 
-
     def is_price_valid(self, symbol, new_price):
         sdmodel = stockdatamodel.StockDataModel()
         price = self.parse_to_int(sdmodel.get_price_by_symbol(symbol))
         new_price = self.parse_to_int(new_price)
         is_valid = (new_price > price * 0.5) and (new_price < price * 2)
-        print 'checking price ', price, ' valid : ', is_valid
+        #print 'checking price ', price, ' valid : ', is_valid
         return is_valid
+
+    def escape_price(self, val):
+	if isinstance(val, basestring):
+            val = val.replace(",", "")	
+	return val
 
     def parse_to_int(self, val):
         return round(float(val))
@@ -112,8 +116,8 @@ class StockJob:
         return
 
     def get_watch_list(self):
-        return ['TSLA', 'YHOO', 'MSFT', 'LNKD', 'BAC', 'AVTI', 'TWTR', 'YELP', 'ZNGA', 'STEM', 'SCTY', 'SNTS', 'RMTI',
-                'RAD', 'RENN', 'SOL', 'RSOL', 'PSX', 'OXY', 'NOK', 'NFLX', 'NBG', 'NQ', 'IXIC', 'MCP', 'MPO', 'MCK',
+        return ['TSLA', 'YHOO', 'MSFT', 'LNKD', 'BAC', 'ATVI', 'TWTR', 'YELP', 'ZNGA', 'STEM', 'SCTY', 'RMTI',
+                'RAD', 'RENN', 'SOL', 'RSOL', 'PSX', 'OXY', 'NOK', 'NFLX', 'NBG', 'NQ', 'MCP', 'MPO', 'MCK',
                 'MNKD', 'JASO', 'JCP', 'HZNP', 'HIMX', 'GOOG', 'GE', 'GME', 'FRO', 'FSLR', 'FNMA', 'FMCC', 'FB', 'DANG',
                 'DRYS', 'SID', 'BBRY', 'BIDU', 'ABIO', 'AAPL', 'AMGN', 'AGNC', 'APP', 'AMZN', 'ANR', 'AMD', 'AVTC',
                 'WUBA']
@@ -125,9 +129,11 @@ class StockJob:
         scm = stockconditionmanager.StockConditionManager()
 
         for symbol in watch_list:
+	    print self.get_now(), ':' , 
             url = self.nasdaq_url_prefix + symbol.lower() + self.url_suffix
-            result = wc.search_pattern_follow_reg(url, self.nasdaq_pattern, "\$[0123456789.]*")
+            result = wc.search_pattern_follow_reg(url, self.nasdaq_pattern, "\$[0123456789.,]*")
             if result:
+		result = self.escape_price(result)
                 self.update_stock_data(symbol, result, 0)
                 if self.is_price_valid(symbol, result):
                     if scm.does_meet_nasdaq(symbol, result):
@@ -135,6 +141,8 @@ class StockJob:
                         print ':SEND_EMAIL:' + symbol.upper() + ':' + result
                         continue
                 print ':SKIP:' + symbol.upper() + ':' + result
+	    else:
+		print 'wrong web ' + symbol
         self.wrap_and_send_email()
 
 

@@ -32,7 +32,7 @@ class WebCrawler:
                 if match:
                     match = match[1:]
                     return match
-        return 'No match'
+        return None
 
     def search_pattern_follow_reg_list(self, url, pattern, reg_list):
         web_content = self.craw_url(url)
