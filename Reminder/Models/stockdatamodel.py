@@ -33,8 +33,9 @@ class StockDataModel(DBModel):
         obj = self.get(id)
         if obj:
             print 'debug ', json.dump(price_data)
-            price_data.append(price)
-            obj.price_data = price_data
+            if not obj.price_data:
+                obj.price_data = []
+            obj.price_data.append(price)
         else:
             obj = StockData(id, symbol, price, vol, price_data)
         self.save(obj)
