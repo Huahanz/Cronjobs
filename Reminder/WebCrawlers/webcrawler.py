@@ -4,41 +4,49 @@ from Reminder.HttpManager import httpmanager
 
 
 class WebCrawler:
-    pattern = None
-    web_content = None
 
-    def __init__(self, url, pattern):
-        self.web_content = self.crawle_url(url)
-        self.pattern = pattern
+    def __init__(self):
+        pass
 
-    def crawle_url(self, url):
+    def craw_url(self, url):
         http_manager = httpmanager.HttpManager()
         return http_manager.make_request_by_get(url)
 
-    def search_pattern_follow_reg(self, reg):
-        # web_content = self.crawle_url(url)
-        if self.web_content and self.pattern:
-            p = re.compile(self.pattern)
-            for m in p.finditer(self.web_content):
-                #price = self.find_price(m.start() + len(self.pattern))
-                match = self.find_reg(m.start() + len(self.pattern), reg)
+    def search_pattern(self, url, pattern):
+        web_content = self.craw_url(url)
+        if web_content and pattern:
+            p = re.compile(pattern)
+            for m in p.finditer(str):
+                match = str[m.start():m.end()]
+                if match:
+                    return match
+        return None
+
+    def search_pattern_follow_reg(self, url, pattern, reg):
+        web_content = self.craw_url(url)
+        if web_content and pattern:
+            p = re.compile(pattern)
+            for m in p.finditer(web_content):
+                #price = self.__find_price(web_content, m.start() + len(pattern))
+                match = self.__find_reg(web_content, m.start() + len(pattern), reg)
                 if match:
                     match = match[1:]
                     return match
         return 'No match'
 
-    def search_pattern_follow_reg_list(self, reg_list):
+    def search_pattern_follow_reg_list(self, url, pattern, reg_list):
+        web_content = self.craw_url(url)
         rets = []
-        if self.web_content and self.pattern:
-            p = re.compile(self.pattern)
-            for m in p.finditer(self.web_content):
-                match = self.find_reg_list(m.start() + len(self.pattern), reg_list)
+        if web_content and pattern:
+            p = re.compile(pattern)
+            for m in p.finditer(web_content):
+                match = self.__find_reg_list(web_content, m.start() + len(pattern), reg_list)
                 if match:
                     rets.append(match[1:])
         return rets
 
-    def find_reg(self, start_index, reg):
-        str = self.web_content[start_index:]
+    def __find_reg(self, web_content, start_index, reg):
+        str = web_content[start_index:]
         #print 'rr ', reg, str[:100]
         p = re.compile(reg)
         for m in p.finditer(str):
@@ -47,9 +55,9 @@ class WebCrawler:
                 return match
         return None
 
-    def find_reg_list(self, start_index, reg_list):
+    def __find_reg_list(self, web_content, start_index, reg_list):
         for reg in reg_list:
-            match = self.find_reg(start_index, reg)
+            match = self.__find_reg(web_content, start_index, reg)
             if match:
                 return match
 
@@ -59,21 +67,21 @@ class WebCrawler:
             print str[m.start():]
             print str[m.start():m.end()]
 
-    def find_price(self, start_index):
-        while self.web_content[start_index].isdigit() == 0:
+    def __find_price(self, web_content, start_index):
+        while web_content[start_index].isdigit() == 0:
             start_index += 1
         ix = start_index + 1
-        while ix < len(self.web_content):
-            if self.web_content[start_index:ix].isdigit() == 0:
+        while ix < len(web_content):
+            if web_content[start_index:ix].isdigit() == 0:
                 break
             ix += 1
-        price = self.web_content[start_index:ix - 1]
+        price = web_content[start_index:ix - 1]
         if price.isdigit():
             return price
         return None
 
     def search_string(self, url, needle):
-        web_content = self.crawle_url(url)
+        web_content = self.craw_url(url)
         start = 0
         while 1:
             m = web_content.find(needle, start)

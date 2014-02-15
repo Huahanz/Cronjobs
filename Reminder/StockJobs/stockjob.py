@@ -1,8 +1,6 @@
 from Reminder.WebCrawlers import webcrawler
 from Reminder.EmailManager import emailmanager
-from Reminder.ConditionManagers import conditionmanager
 from Reminder.ConditionManagers import stockconditionmanager
-from Reminder.Models import nasdaqstockmodel
 from Reminder.Models import stockdatamodel
 from random import randint
 
@@ -14,15 +12,14 @@ class StockJob:
     nasdaq_url_prefix = 'http://www.nasdaq.com/symbol/'
     nasdaq_after_hours_suffix = '/after-hours'
     nasdaq_premarket_suffix = '/premarket'
-    emailmanager = None
-    conditionmanager = None
     body = ""
+    url_suffix = ""
+    nasdaq_pattern = "qwidget-dollar"
 
     def __init__(self):
-        self.emailmanager = emailmanager.EmailManager()
-        self.conditionmanager = conditionmanager.ConditionManager()
+        pass
 
-    def set_env(self, stock_obj):
+    def set_env(self):
         now = self.get_now()
         weekday = now.weekday()
         if weekday == 5 or weekday == 6:
@@ -36,32 +33,15 @@ class StockJob:
         if now < premarket_start or now > after_hours_close:
             print 'market not open. exit'
             sys.exit(0)
-        curl_url = self.nasdaq_url_prefix + stock_obj.symbol
         if now < market_open:
             print 'using premarket',
-            curl_url += self.nasdaq_premarket_suffix
+            self.url_suffix = self.nasdaq_premarket_suffix
         elif now > market_close:
             print 'using after hours',
-            curl_url += self.nasdaq_after_hours_suffix
+            self.url_suffix = self.nasdaq_after_hours_suffix
         else:
             print 'normal hours',
-        return webcrawler.WebCrawler(curl_url, stock_obj.pattern)
 
-    def run(self, webcrawler, stock_obj):
-        if webcrawler:
-            result = webcrawler.search_pattern_follow_reg("\$[0123456789.]*")
-            if result:
-                self.update_stock_data(stock_obj.symbol, result, 0)
-                if self.conditionmanager.is_larger_than(result, stock_obj.max) or self.conditionmanager.is_lower_than(
-                        result, stock_obj.min):
-                    if not self.is_price_valid(stock_obj.symbol, result):
-                        return False
-                    self.body += 'symbol : ' + stock_obj.symbol + ' : price : ' + result + '<br>'
-                    print ':SEND_EMAIL:' + stock_obj.symbol.upper() + ':' + result
-                    return True
-                else:
-                    print ':SKIP:' + stock_obj.symbol.upper() + ':' + result
-                    return False
 
     def is_price_valid(self, symbol, new_price):
         sdmodel = stockdatamodel.StockDataModel()
@@ -76,22 +56,12 @@ class StockJob:
 
     def wrap_and_send_email(self):
         if len(self.body) > 0:
-            self.emailmanager.send_to_defaults('Stock Alert', self.body)
+            em = emailmanager.EmailManager()
+            em.send_to_defaults('Stock Alert', self.body)
             num = randint(1, 100)
             if num < 33:
-                pass
-                #    	self.emailmanager.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123', 'alert', self.body)
-
-    def get_list_from_db(self):
-        model = nasdaqstockmodel.NasdaqStockModel()
-        return model.get_all()
-
-    def run_list(self):
-        stock_list = self.get_list_from_db()
-        for stock_obj in stock_list:
-            webcrawler = self.set_env(stock_obj)
-            email_sent = self.run(webcrawler, stock_obj)
-        self.wrap_and_send_email()
+                em.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123',
+                                                      'alert', self.body)
 
     def run_earning_calander(self):
         ec_url_prefix = 'http://biz.yahoo.com/research/earncal/'
@@ -99,18 +69,21 @@ class StockJob:
         ec_url_date = self.date_format_pad_zero(now.year) + self.date_format_pad_zero(
             now.month) + self.date_format_pad_zero(now.day)
         url = ec_url_prefix + ec_url_date + '.html'
-        pattern = "finance.yahoo.com\/q\?s="
+        # pattern = "finance.yahoo.com\/q\?s="
         print 'url' + url
-        wc = webcrawler.WebCrawler(url, pattern)
+        wc = webcrawler.WebCrawler()
         stock_list = self.get_watch_list()
-        reg_list = []
+        match_list = []
         for symbol in stock_list:
-            symbol = self.get_earning_calaander_reg(symbol)
-            reg_list.append(symbol)
-        matches = wc.search_pattern_follow_reg_list(reg_list)
-        if matches:
+            symbol = self.get_earning_calander_reg(symbol)
+            pattern = symbol
+            does_match = wc.search_pattern(url, pattern)
+            if does_match:
+                match_list.append(pattern)
+
+        if match_list:
             self.body += 'Earning report found : '
-            self.body = self.body.join(matches)
+            self.body = self.body.join(match_list)
             self.wrap_and_send_email()
 
     def date_format_pad_zero(self, val):
@@ -121,12 +94,12 @@ class StockJob:
             return '0' + str(val)
         return str(val)
 
-    def get_earning_calaander_reg(self, symbol):
+    def get_earning_calander_reg(self, symbol):
         return symbol.upper()
 
     def check_and_run_earning_calander(self):
         now = self.get_now()
-        if now.hour == 6 and now.minute == 1:
+        if now.hour == 1 and now.minute <= 2:
             self.run_earning_calander()
 
     def get_now(self):
@@ -145,17 +118,27 @@ class StockJob:
                 'DRYS', 'SID', 'BBRY', 'BIDU', 'ABIO', 'AAPL', 'AMGN', 'AGNC', 'APP', 'AMZN', 'ANR', 'AMD', 'AVTC',
                 'WUBA']
 
-    def search_watch_list(self):
-        for symbol in self.get_watch_list():
-            sdmodel = stockdatamodel.StockDataModel()
-            price = sdmodel.get_price_by_symbol(symbol)
+    def run_by_watch_list(self):
+        self.set_env()
+        wc = webcrawler.WebCrawler()
+        watch_list = self.get_watch_list()
+        scm = stockconditionmanager.StockConditionManager()
 
-    # def run_by_watch_list(self):
-    #     watch_list = self.get_watch_list()
-    #     for symbol in watch_list:
+        for symbol in watch_list:
+            url = self.nasdaq_premarket_suffix + symbol.lower() + self.url_suffix
+            result = wc.search_pattern_follow_reg(url, self.nasdaq_pattern, "\$[0123456789.]*")
+            if result:
+                self.update_stock_data(symbol, result, 0)
+                if self.is_price_valid(symbol, result):
+                    if scm.does_meet_nasdaq(symbol, result):
+                        self.body += 'symbol : ' + symbol + ' : price : ' + result + '<br>'
+                        print ':SEND_EMAIL:' + symbol.upper() + ':' + result
+                        continue
+                print ':SKIP:' + symbol.upper() + ':' + result
+        self.wrap_and_send_email()
 
 
 sj = StockJob()
-sj.run_list()
+sj.run_by_watch_list()
 sj.check_and_run_earning_calander()
 print '======================='

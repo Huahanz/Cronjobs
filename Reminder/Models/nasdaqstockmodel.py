@@ -12,8 +12,19 @@ class NasdaqStockModel(DBModel):
     def get(self, id, offset=None, limit=None):
         return DBModel.get(self, id)
 
+    def get_by_symbol(self, symbol):
+        id = self.generate_id(symbol)
+        return self.get(id)
+
     def wrap_to_obj(self, data):
         if len(data) != len(self.schema):
             print 'invalid data format'
             return None
         return NasdaqStock(data[0], data[1], data[2], data[3], data[4])
+
+    def generate_id(self, symbol):
+        id = 0
+        for c in symbol:
+            id += (ord(c) - 97)
+            id *= 26
+        return id

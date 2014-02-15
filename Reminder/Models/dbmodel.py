@@ -4,8 +4,9 @@ from Reminder.DB.dbwrapper import DBWrapper
 class DBModel:
     table_name = None
     dbconnection = None
+    set_id = False
 
-    def __init__(self, table_name):
+    def __init__(self, table_name, set_id=False):
         pass
 
     def get(self, id, offset=None, limit=None):
@@ -56,6 +57,8 @@ class DBModel:
         return None
 
     def save(self, obj):
+        if self.set_id:
+            obj.id = obj.generate_id()
         if not obj.id:
             return self.add(obj)
         else:
