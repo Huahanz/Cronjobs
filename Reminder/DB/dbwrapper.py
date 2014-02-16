@@ -7,16 +7,17 @@ class DBWrapper:
     dbs = []
 
     def __init__(self):
+	self.connet_by_pool(100)
         pass
 
     def connect(self):
-        print '@@ getting db connection'
-        self.dbs.append(MySQLdb.connect(host="localhost",
+       	print '@@ getting db connection'
+        db = MySQLdb.connect(host="localhost",
                                   user="root",
                                   passwd="1234",
-                                  db="stock"))
-
-        self.dbcurs.append(self.db.cursor())
+                                  db="stock")
+        self.dbs.append(db)
+        self.dbcurs.append(db.cursor())
         return True
 
     def connet_by_pool(self, num):
