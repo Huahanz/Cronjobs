@@ -27,7 +27,7 @@ class StockJob:
         weekday = now.weekday()
         if weekday == 5 or weekday == 6:
             print 'market close during weekend'
-            sys.exit(0)
+#            sys.exit(0)
         premarket_start = now.replace(hour=2, minute=0, second=0, microsecond=0)
         market_open = now.replace(hour=6, minute=30, second=0, microsecond=0)
         market_close = now.replace(hour=13, minute=0, second=0, microsecond=0)
@@ -132,7 +132,7 @@ class StockJob:
         self.scm = stockconditionmanager.StockConditionManager()
         threads = []
         for symbol in watch_list:
-            thread = Thread(target=self.run, args=(symbol))
+            thread = Thread(target=self.run, args=(symbol, ))
             thread.start()
             threads.append(thread)
 
@@ -142,7 +142,7 @@ class StockJob:
         self.wrap_and_send_email()
 
     def run(self, symbol):
-        msg = self.get_now() + ":"
+        msg = unicode(self.get_now()) + ":"
         url = self.nasdaq_url_prefix + symbol.lower() + self.url_suffix
         result = self.wc.search_pattern_follow_reg(url, self.nasdaq_pattern, "\$[0123456789.,]*")
         if result:
