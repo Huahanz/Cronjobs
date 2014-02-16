@@ -43,7 +43,6 @@ class DBModel:
             cmd = 'INSERT INTO ' + self.table_name + ' VALUES ('
             cmd += data
             cmd += ');'
-            #print '@@ ' ,  cmd
             if not DBModel.dbconnection:
                 DBModel.dbconnection = DBWrapper()
             ret = DBModel.dbconnection.insert(cmd)

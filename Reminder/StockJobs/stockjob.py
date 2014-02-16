@@ -144,11 +144,9 @@ class StockJob:
 
     def run(self, symbol):
         sleep(0.2)
-        print '@@ start new thread for : ' + symbol
         msg = unicode(self.get_now()) + ":"
         url = self.nasdaq_url_prefix + symbol.lower() + self.url_suffix
         result = self.wc.search_pattern_follow_reg(url, self.nasdaq_pattern, "\$[0123456789.,]*")
-        print '@@ finish web craw for ' + symbol
         if result:
             result = self.escape_price(result)
             self.update_stock_data(symbol, result, 0)
