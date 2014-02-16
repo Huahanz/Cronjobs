@@ -3,6 +3,7 @@ from Reminder.EmailManager import emailmanager
 from Reminder.ConditionManagers import stockconditionmanager
 from Reminder.Models import stockdatamodel
 from random import randint
+from threading import Thread
 
 import datetime
 import sys
@@ -15,6 +16,8 @@ class StockJob:
     body = ""
     url_suffix = ""
     nasdaq_pattern = "qwidget-dollar"
+    wc = None
+    scm = None
 
     def __init__(self):
         pass
@@ -124,27 +127,36 @@ class StockJob:
 
     def run_by_watch_list(self):
         self.set_env()
-        wc = webcrawler.WebCrawler()
+        self.wc = webcrawler.WebCrawler()
         watch_list = self.get_watch_list()
-        scm = stockconditionmanager.StockConditionManager()
-
+        self.scm = stockconditionmanager.StockConditionManager()
+        threads = []
         for symbol in watch_list:
-            print self.get_now(), ':',
-            url = self.nasdaq_url_prefix + symbol.lower() + self.url_suffix
-            result = wc.search_pattern_follow_reg(url, self.nasdaq_pattern, "\$[0123456789.,]*")
-            if result:
-                result = self.escape_price(result)
-                self.update_stock_data(symbol, result, 0)
-                if self.is_price_valid(symbol, result):
-                    if scm.does_meet_nasdaq(symbol, result):
-                        self.body += 'symbol : ' + symbol + ' : price : ' + result + '<br>'
-                        print ':SEND_EMAIL:' + symbol.upper() + ':' + result
-                        continue
-                print ':SKIP:' + symbol.upper() + ':' + result
-            else:
-                print 'wrong web ' + symbol
+            thread = Thread(target=self.run, args=(symbol))
+            thread.start()
+            threads.append(thread)
+
+        for thread in threads:
+            thread.join()
+
         self.wrap_and_send_email()
 
+    def run(self, symbol):
+        msg = self.get_now() + ":"
+        url = self.nasdaq_url_prefix + symbol.lower() + self.url_suffix
+        result = self.wc.search_pattern_follow_reg(url, self.nasdaq_pattern, "\$[0123456789.,]*")
+        if result:
+            result = self.escape_price(result)
+            self.update_stock_data(symbol, result, 0)
+            if self.is_price_valid(symbol, result):
+                if self.scm.does_meet_nasdaq(symbol, result):
+                    self.body += 'symbol : ' + symbol + ' : price : ' + result + '<br>'
+                    msg += ':SEND_EMAIL:' + symbol.upper() + ':' + result
+                    return
+            msg += ':SKIP:' + symbol.upper() + ':' + result
+        else:
+            msg += 'wrong web ' + symbol
+        print msg
 
 sj = StockJob()
 sj.run_by_watch_list()
