@@ -1,51 +1,37 @@
 import MySQLdb
-from random import choice
-from random import randrange
 
 class DBWrapper:
-    dbcurs = []
-    dbs = []
+    dbcur = None
+    db = None
 
     def __init__(self):
-	self.connet_by_pool(100)
         pass
 
     def connect(self):
-       	print '@@ getting db connection'
-        db = MySQLdb.connect(host="localhost",
-                                  user="root",
-                                  passwd="1234",
-                                  db="stock")
-        self.dbs.append(db)
-        self.dbcurs.append(db.cursor())
-        return True
-
-    def connet_by_pool(self, num):
-        for i in range(0, num):
-            self.connect()
+        self.db = MySQLdb.connect(host="localhost",
+                             user="root",
+                             passwd="1234",
+                             db="stock")
+        self.dbcur = self.db.cursor()
 
     def exe(self, cmd):
-        if not self.dbcurs:
+        try:
             self.connect()
-        print '@@ exe ' + cmd
-        dbcur = choice(self.dbcurs)
-        dbcur.execute(cmd)
-        return dbcur.fetchall()
+            self.dbcur.execute(cmd)
+            return self.dbcur.fetchall()
+        finally:
+            self.db.close()
 
     def select(self, cmd):
         return self.exe(cmd)
 
     def commit(self, cmd):
-        if not self.dbcurs:
-            self.connect()
         try:
-            ix = randrange(0, len(self.dbcurs))
-            dbcur = self.dbcurs[ix]
-            db = self.dbs[ix]
-            dbcur.execute(cmd)
-            db.commit()
+            self.connect()
+            self.dbcur.execute(cmd)
+            self.db.commit()
         except:
-            db.rollback()
+            self.db.rollback()
 
     def insert(self, cmd):
         return self.commit(cmd)
