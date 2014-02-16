@@ -12,8 +12,9 @@ class DBWrapper:
                              db="stock")
         dbcur = db.cursor()
         dbcur.execute(cmd)
-        dbcur.fetchall()
+        ret = dbcur.fetchall()
         db.close()
+	return ret
 
     def select(self, cmd):
         return self.exe(cmd)
