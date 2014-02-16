@@ -51,7 +51,8 @@ class StockJob:
         price = self.parse_to_int(sdmodel.get_price_by_symbol(symbol))
         new_price = self.parse_to_int(new_price)
         is_valid = (new_price > price * 0.5) and (new_price < price * 2)
-        #print 'checking price ', price, ' valid : ', is_valid
+	if not is_valid:
+            print 'checking price ', price, ' valid : ', is_valid, ' ____ ', new_price
         return is_valid
 
     def escape_price(self, val):

@@ -35,6 +35,8 @@ class StockDataModel(DBModel):
             if not obj.price_data:
                 obj.price_data = []
             obj.price_data.append(price)
+	    obj.vol = vol
+	    obj.price = price
         else:
             obj = StockData(id, symbol, price, vol, price_data)
         self.save(obj)
