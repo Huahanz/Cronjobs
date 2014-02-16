@@ -32,7 +32,7 @@ class StockJob:
         print now, ':',
         if now < premarket_start or now > after_hours_close:
             print 'market not open. exit'
-            #         sys.exit(0)
+            sys.exit(0)
         if now < market_open:
             print 'using premarket',
             self.url_suffix = self.nasdaq_premarket_suffix
@@ -116,12 +116,11 @@ class StockJob:
         return
 
     def get_watch_list(self):
-        # return ['TSLA', 'YHOO', 'MSFT', 'LNKD', 'BAC', 'ATVI', 'TWTR', 'YELP', 'ZNGA', 'STEM', 'SCTY', 'RMTI',
-        #         'RAD', 'RENN', 'SOL', 'RSOL', 'PSX', 'OXY', 'NOK', 'NFLX', 'NBG', 'NQ', 'MCP', 'MPO', 'MCK',
-        #         'MNKD', 'JASO', 'JCP', 'HZNP', 'HIMX', 'GOOG', 'GE', 'GME', 'FRO', 'FSLR', 'FNMA', 'FMCC', 'FB', 'DANG',
-        #         'DRYS', 'SID', 'BBRY', 'BIDU', 'ABIO', 'AAPL', 'AMGN', 'AGNC', 'APP', 'AMZN', 'ANR', 'AMD', 'AVTC',
-        #         'WUBA']
-        return ['TSLA']
+        return ['TSLA', 'YHOO', 'MSFT', 'LNKD', 'BAC', 'ATVI', 'TWTR', 'YELP', 'ZNGA', 'STEM', 'SCTY', 'RMTI',
+                 'RAD', 'RENN', 'SOL', 'RSOL', 'PSX', 'OXY', 'NOK', 'NFLX', 'NBG', 'NQ', 'MCP', 'MPO', 'MCK',
+                 'MNKD', 'JASO', 'JCP', 'HZNP', 'HIMX', 'GOOG', 'GE', 'GME', 'FRO', 'FSLR', 'FNMA', 'FMCC', 'FB', 'DANG',
+                 'DRYS', 'SID', 'BBRY', 'BIDU', 'ABIO', 'AAPL', 'AMGN', 'AGNC', 'APP', 'AMZN', 'ANR', 'AMD', 'AVTC',
+                 'WUBA']
 
     def run_by_watch_list(self):
         self.set_env()

@@ -18,11 +18,9 @@ class DBModel:
             DBModel.dbconnection = DBWrapper()
             DBModel.dbconnection.connect()
         data = DBModel.dbconnection.select(cmd)
-        # print 'data : ', data
         if type(data) is tuple:
             ret = []
             for entry in data:
-            #	print 'entry ' , entry
                 ret.append(self.wrap_to_obj(entry))
             return ret
         else:
@@ -59,6 +57,7 @@ class DBModel:
     def save(self, obj):
         if self.set_id:
             obj.id = obj.generate_id()
+	obj = self.wrap_to_data(obj)
         if not obj.id:
             return self.add(obj)
         else:
@@ -70,6 +69,9 @@ class DBModel:
 
     def wrap_to_obj(self, data):
         pass
+
+    def wrap_to_data(self, obj):
+	pass
 
     def wrap_to_sql_insert_data(self, obj):
         sql_cmd = ''
