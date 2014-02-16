@@ -63,6 +63,8 @@ class StockDataModel(DBModel):
         id = self.generate_id(symbol)
         entry = self.get(id)
         if isinstance(entry, (list, tuple)):
+	    if not entry:
+		return None
             entry = entry[0]
         if entry:
             return entry.price
