@@ -1,37 +1,33 @@
 import MySQLdb
 
-class DBWrapper:
-    dbcur = None
-    db = None
 
+class DBWrapper:
     def __init__(self):
         pass
 
-    def connect(self):
-        self.db = MySQLdb.connect(host="localhost",
+    def exe(self, cmd):
+        db = MySQLdb.connect(host="localhost",
                              user="root",
                              passwd="1234",
                              db="stock")
-        self.dbcur = self.db.cursor()
-
-    def exe(self, cmd):
-        try:
-            self.connect()
-            self.dbcur.execute(cmd)
-            return self.dbcur.fetchall()
-        finally:
-            self.db.close()
+        dbcur = db.cursor()
+        dbcur.execute(cmd)
+        dbcur.fetchall()
+        db.close()
 
     def select(self, cmd):
         return self.exe(cmd)
 
     def commit(self, cmd):
-        try:
-            self.connect()
-            self.dbcur.execute(cmd)
-            self.db.commit()
-        except:
-            self.db.rollback()
+        db = MySQLdb.connect(host="localhost",
+                             user="root",
+                             passwd="1234",
+                             db="stock")
+        dbcur = db.cursor()
+        dbcur.execute(cmd)
+        db.commit()
+        db.rollback()
+        db.close()
 
     def insert(self, cmd):
         return self.commit(cmd)
