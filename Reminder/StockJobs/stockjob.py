@@ -4,6 +4,7 @@ from Reminder.ConditionManagers import stockconditionmanager
 from Reminder.Models import stockdatamodel
 from random import randint
 from threading import Thread
+from time import sleep
 
 import datetime
 import sys
@@ -142,6 +143,8 @@ class StockJob:
         self.wrap_and_send_email()
 
     def run(self, symbol):
+        sleep(0.1)
+        print '@@ start new thread for : ' + symbol
         msg = unicode(self.get_now()) + ":"
         url = self.nasdaq_url_prefix + symbol.lower() + self.url_suffix
         result = self.wc.search_pattern_follow_reg(url, self.nasdaq_pattern, "\$[0123456789.,]*")

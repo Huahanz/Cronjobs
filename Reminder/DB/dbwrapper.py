@@ -9,6 +9,7 @@ class DBWrapper:
         pass
 
     def connect(self):
+        print '@@ getting db connection'
         self.db = MySQLdb.connect(host="localhost",
                                   user="root",
                                   passwd="1234",
@@ -20,6 +21,7 @@ class DBWrapper:
     def exe(self, cmd):
         if not self.dbcur:
             self.connect()
+        print '@@ exe ' + cmd
         self.dbcur.execute(cmd)
         return self.dbcur.fetchall()
 
