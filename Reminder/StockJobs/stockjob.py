@@ -152,6 +152,7 @@ class StockJob:
                 if self.scm.does_meet_nasdaq(symbol, result):
                     self.body += 'symbol : ' + symbol + ' : price : ' + result + '<br>'
                     msg += ':SEND_EMAIL:' + symbol.upper() + ':' + result
+                    print msg
                     return
             msg += ':SKIP:' + symbol.upper() + ':' + result
         else:
