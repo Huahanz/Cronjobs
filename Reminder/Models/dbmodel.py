@@ -16,7 +16,6 @@ class DBModel:
             #	print 'cmd', cmd
         if not DBModel.dbconnection:
             DBModel.dbconnection = DBWrapper()
-            DBModel.dbconnection.connect()
         data = DBModel.dbconnection.select(cmd)
         if type(data) is tuple:
             ret = []
@@ -35,7 +34,6 @@ class DBModel:
             #print 'update : ', cmd
         if not DBModel.dbconnection:
             DBModel.dbconnection = DBWrapper()
-            DBModel.dbconnection.connect()
         DBModel.dbconnection.update(cmd)
         return
 
@@ -48,7 +46,6 @@ class DBModel:
             #print '@@ ' ,  cmd
             if not DBModel.dbconnection:
                 DBModel.dbconnection = DBWrapper()
-                DBModel.dbconnection.connect()
             ret = DBModel.dbconnection.insert(cmd)
             #           print '#', ret
             return ret
