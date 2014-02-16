@@ -1,5 +1,6 @@
 from random import choice
 
+
 class EmailPool:
     def __init__(self):
         pass

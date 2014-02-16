@@ -1,6 +1,7 @@
 import BaseObject
 import json
 
+
 class StockData(BaseObject.BaseObject):
     id = None
     symbol = None

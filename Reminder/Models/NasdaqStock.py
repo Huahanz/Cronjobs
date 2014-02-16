@@ -1,5 +1,6 @@
 import BaseObject
 
+
 class NasdaqStock(BaseObject.BaseObject):
     id = None
     symbol = None

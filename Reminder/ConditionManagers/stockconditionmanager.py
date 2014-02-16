@@ -1,8 +1,8 @@
 import conditionmanager
 from Reminder.Models import nasdaqstockmodel
 
-class StockConditionManager(conditionmanager.ConditionManager):
 
+class StockConditionManager(conditionmanager.ConditionManager):
     def __init__(self):
         conditionmanager.ConditionManager.__init__(self)
 
@@ -14,4 +14,6 @@ class StockConditionManager(conditionmanager.ConditionManager):
         return False
 
     def does_basic_match(self, price, min, max):
-        return conditionmanager.ConditionManager.is_larger_than(price, max) or conditionmanager.ConditionManager.is_lower_than(price, min)
+        return conditionmanager.ConditionManager.is_larger_than(price,
+                                                                max) or conditionmanager.ConditionManager.is_lower_than(
+            price, min)

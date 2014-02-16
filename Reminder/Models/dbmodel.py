@@ -13,7 +13,7 @@ class DBModel:
         cmd = 'SELECT * FROM ' + self.table_name
         if id:
             cmd += ' WHERE id = ' + str(id)
-        #	print 'cmd', cmd
+            #	print 'cmd', cmd
         if not DBModel.dbconnection:
             DBModel.dbconnection = DBWrapper()
             DBModel.dbconnection.connect()
@@ -57,7 +57,7 @@ class DBModel:
     def save(self, obj):
         if self.set_id:
             obj.id = obj.generate_id()
-	obj = self.wrap_to_data(obj)
+        obj = self.wrap_to_data(obj)
         if not obj.id:
             return self.add(obj)
         else:
@@ -71,7 +71,7 @@ class DBModel:
         pass
 
     def wrap_to_data(self, obj):
-	pass
+        pass
 
     def wrap_to_sql_insert_data(self, obj):
         sql_cmd = ''

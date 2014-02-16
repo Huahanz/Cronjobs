@@ -4,7 +4,6 @@ from Reminder.HttpManager import httpmanager
 
 
 class WebCrawler:
-
     def __init__(self):
         pass
 

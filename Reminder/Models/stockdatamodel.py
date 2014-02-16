@@ -2,6 +2,7 @@ from Reminder.Models.StockData import StockData
 from Reminder.Models.dbmodel import DBModel
 import json
 
+
 class StockDataModel(DBModel):
     table_name = 'stockdata'
     #schema = {'id': 'int', 'symbol': 'string', 'price': 'float', 'vol': 'int'}
@@ -29,8 +30,8 @@ class StockDataModel(DBModel):
         price_data = []
         obj = self.get(id)
         if obj:
-	    if not isinstance(obj, basestring):
-		obj = obj[0]
+            if not isinstance(obj, basestring):
+                obj = obj[0]
             if not obj.price_data:
                 obj.price_data = []
             obj.price_data.append(price)
@@ -49,14 +50,14 @@ class StockDataModel(DBModel):
         if len(data) != len(self.schema):
             print 'invalid data format'
             return None
-	price_data = []
-	if data[4]:
-	    price_data = json.loads(data[4]) 
+        price_data = []
+        if data[4]:
+            price_data = json.loads(data[4])
         return StockData(data[0], data[1], data[2], data[3], price_data)
 
     def wrap_to_data(self, obj):
-	obj.price_data = json.dumps(obj.price_data)
-	return obj
+        obj.price_data = json.dumps(obj.price_data)
+        return obj
 
     def get_price_by_symbol(self, symbol):
         id = self.generate_id(symbol)
