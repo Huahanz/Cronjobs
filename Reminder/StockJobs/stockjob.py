@@ -28,7 +28,7 @@ class StockJob:
         weekday = now.weekday()
         if weekday == 5 or weekday == 6:
             print 'market close during weekend'
-#            sys.exit(0)
+        #            sys.exit(0)
         premarket_start = now.replace(hour=2, minute=0, second=0, microsecond=0)
         market_open = now.replace(hour=6, minute=30, second=0, microsecond=0)
         market_close = now.replace(hour=13, minute=0, second=0, microsecond=0)
@@ -36,7 +36,7 @@ class StockJob:
         print now, ':',
         if now < premarket_start or now > after_hours_close:
             print 'market not open. exit'
-    #        sys.exit(0)
+            #        sys.exit(0)
         if now < market_open:
             print 'using premarket',
             self.url_suffix = self.nasdaq_premarket_suffix
@@ -148,7 +148,7 @@ class StockJob:
         msg = unicode(self.get_now()) + ":"
         url = self.nasdaq_url_prefix + symbol.lower() + self.url_suffix
         result = self.wc.search_pattern_follow_reg(url, self.nasdaq_pattern, "\$[0123456789.,]*")
-	print '@@ finish web craw for ' + symbol
+        print '@@ finish web craw for ' + symbol
         if result:
             result = self.escape_price(result)
             self.update_stock_data(symbol, result, 0)
@@ -162,6 +162,7 @@ class StockJob:
         else:
             msg += 'wrong web ' + symbol
         print msg
+
 
 sj = StockJob()
 sj.run_by_watch_list()
