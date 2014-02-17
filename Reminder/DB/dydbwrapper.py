@@ -8,6 +8,7 @@ class DYDBWrapper:
     region = None
     conn = None
     write_queue = {}
+    unit = 10
 
     def __init__(self, region='us-east-1'):
         self.region = region
@@ -70,38 +71,47 @@ class DYDBWrapper:
         self.write_queue[table_name][key].append(item)
 
     def flush_batch_writes(self):
-        # print 'flushing '
+        print 'flushing '
         self.connet()
-        batch_list = self.conn.new_batch_write_list()
+        batch_item_list = self.__group_batch_items()
+        self.__send_batch(batch_item_list)
+
+    def __group_batch_items(self):
+        batch_item_list = {}
         for table_name, item_dict in self.write_queue.iteritems():
             table = self.conn.get_table(table_name)
-            if not table:
-                continue
-            item_list = self.__group_batch_items(table, item_dict)
-            batch_list.add_batch(table, puts=item_list)
-        # print 'blist ', batch_list
-        self.conn.batch_write_item(batch_list)
+            item_list = []
+            for key, items in item_dict.iteritems():
+                merged_item = table.new_item(attrs={})
+                for item in items:
+                    merged_item = dict(merged_item.items() + item.items())
+                item_list.append(merged_item)
+            batch_item_list[table_name] = item_list
+        return batch_item_list
 
-    def __group_batch_items(self, table, item_dict):
-        item_list = []
-        for key, items in item_dict.iteritems():
-            merged_item = table.new_item(attrs={})
-            for item in items:
-                merged_item = dict(merged_item.items() + item.items())
-            item_list.append(merged_item)
-        return item_list
+    def __send_batch(self, batch_item_list):
+        batch_list = self.conn.new_batch_write_list()
+        buffer_list = []
+        for table_name, item_list in batch_item_list.iteritems():
+            table = self.conn.get_table(table_name)
+            for item in item_list:
+                buffer_list.append(item)
+                if len(buffer_list) > self.unit:
+                    batch_list.add_batch(table, buffer_list)
+                    self.conn.batch_write_item(batch_list)
+                    batch_list = self.conn.new_batch_write_list()
+                    buffer_list = []
+            if buffer_list:
+                batch_list.add_batch(table, buffer_list)
+                self.conn.batch_write_item(batch_list)
+                buffer_list = []
+                batch_list = self.conn.new_batch_write_list()
 
-dy = DYDBWrapper()
-tb_name = 'nq_stock_price_data'
-dy.insert(tb_name, 'LNKD100', {'symbol': 'LNKD100', 'price': 1129.1})
-print '1 : ', dy.select(tb_name, 'LNKD100')
-dy.insert('test', 'LNKD100', {'id': 'LNKD100', 'price': 14.1})
-dy.insert('test', 'LNKD100', {'id': 'LNKD100', 'price1': 1.1})
-dy.insert('test', 'LNKD100', {'id': 'LNKD100', 'pri': 12.1})
-# dy.insert(tb_name, {'symbol': 'LNKD100', 'price': 209.1})
-# dy.insert(tb_name, {'symbol': 'LNKD100', 'price1': 209.1})
-# dy.insert(tb_name, {'symbol': 'LNKD100', 'price2': 209.1})
-# print '1 : ', dy.select(tb_name, 'LNKD100')
-# dy.update(tb_name, 'LNKD100', {'price': 188.2, 'new_key': 190})
-# print '1 : ', dy.select(tb_name, 'LNKD100')
-print '2 : ', dy.select(tb_name, 'LNKD100')
+# dy = DYDBWrapper()
+# tb_name = 'nq_stock_price_data'
+# dy.insert(tb_name, 'LNKD99', {'symbol': 'LNKD99', 'price': 1129.1})
+# print '1 : ', dy.select(tb_name, 'LNKD99')
+# dy.insert('test', 'LNKD99', {'id': 'LNKD99', 'price': 14.1})
+# dy.insert('test', 'LNKD99', {'id': 'LNKD99', 'price1': 1.1})
+# dy.insert('test', 'LNKD99', {'id': 'LNKD99', 'pri': 12.1})
+# print '2 : ', dy.select(tb_name, 'LNKD99')
