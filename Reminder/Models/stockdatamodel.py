@@ -17,7 +17,7 @@ class StockDataModel(DBModel):
     json_field = 'price_data'
 
     def __init__(self):
-        DBModel.__init__(self, self.table_name)
+        DBModel.__init__(self, True)
 
     def get(self, id, offset=None, limit=None):
         return DBModel.get(self, id)
@@ -35,8 +35,8 @@ class StockDataModel(DBModel):
             if not obj.price_data:
                 obj.price_data = []
             obj.price_data.append(price)
-	    obj.vol = vol
-	    obj.price = price
+            obj.vol = vol
+            obj.price = price
         else:
             obj = StockData(id, symbol, price, vol, price_data)
         self.save(obj)

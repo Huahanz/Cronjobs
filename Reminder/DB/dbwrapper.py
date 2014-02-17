@@ -14,7 +14,7 @@ class DBWrapper:
         dbcur.execute(cmd)
         ret = dbcur.fetchall()
         db.close()
-	return ret
+        return ret
 
     def select(self, cmd):
         return self.exe(cmd)
