@@ -13,8 +13,7 @@ class NQStockDataModel(DYDBModel):
         return DYDBModel.get(self, key)
 
     def update_price(self, key, price_data):
-        price_data[self.primary_key] = key
-        return DYDBModel.save(self, price_data)
+        return DYDBModel.update_or_insert(self, key, price_data)
 
         # print nm.get('tsla')
         # nm.update_price('tsla', 202)
