@@ -120,7 +120,9 @@ class StockJob:
         sdmodel = stockdatamodel.StockDataModel()
         sdmodel.update(symbol, price, vol)
         nqmodel = nqstockdatamodel.NQStockDataModel()
-        nqmodel.update_price(symbol, price)
+        now = self.get_now()
+        prefix = now.strftime("%I:%M:%S")
+        nqmodel.update_price(symbol, {prefix: price})
         return
 
     def get_watch_list(self):

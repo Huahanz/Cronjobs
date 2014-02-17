@@ -1,4 +1,5 @@
 from dydbmodel import DYDBModel
+import datetime
 
 
 class NQStockDataModel(DYDBModel):
@@ -11,14 +12,16 @@ class NQStockDataModel(DYDBModel):
         key = self.generate_key(symbol)
         return DYDBModel.get(self, key)
 
-    def update_price(self, symbol, price):
+    def update_price(self, symbol, price_data):
         key = self.generate_key(symbol)
-        return DYDBModel.save(self, {'symbol': key, 'price': price})
+        price_data['symbol'] = key
+        return DYDBModel.save(self, price_data)
 
     def generate_key(self, symbol):
-        return symbol.upper()
+        date = datetime.datetime.today()
+        return symbol.upper() + date
 
-# nm = NQStockDataModel()
-# print nm.get('tsla')
-# nm.update_price('tsla', 202)
-# print nm.get('tsla')
+        # nm = NQStockDataModel()
+        # print nm.get('tsla')
+        # nm.update_price('tsla', 202)
+        # print nm.get('tsla')
