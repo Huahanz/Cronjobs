@@ -12,6 +12,7 @@ class DYDBWrapper:
 
     def connet(self):
         if not self.conn:
+	    print 'make dy conn '
             self.conn = boto.dynamodb.connect_to_region(self.region)
 
     def insert(self, table_name, item_data):
@@ -21,6 +22,7 @@ class DYDBWrapper:
         table = self.conn.get_table(table_name)
         if not table:
             return False
+	print 'insert ', item_data
         item = table.new_item(attrs=item_data)
         item.put()
         return True
