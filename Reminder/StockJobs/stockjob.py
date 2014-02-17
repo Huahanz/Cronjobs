@@ -2,6 +2,7 @@ from Reminder.WebCrawlers import webcrawler
 from Reminder.EmailManager import emailmanager
 from Reminder.ConditionManagers import stockconditionmanager
 from Reminder.Models import stockdatamodel
+from Reminder.Models import nqstockdatamodel
 from random import randint
 from threading import Thread
 from time import sleep
@@ -28,7 +29,7 @@ class StockJob:
         weekday = now.weekday()
         if weekday == 5 or weekday == 6:
             print 'market close during weekend'
-        #            sys.exit(0)
+            #            sys.exit(0)
         premarket_start = now.replace(hour=2, minute=0, second=0, microsecond=0)
         market_open = now.replace(hour=6, minute=30, second=0, microsecond=0)
         market_close = now.replace(hour=13, minute=0, second=0, microsecond=0)
@@ -51,7 +52,7 @@ class StockJob:
         price = self.parse_to_int(sdmodel.get_price_by_symbol(symbol))
         new_price = self.parse_to_int(new_price)
         is_valid = (new_price > price * 0.5) and (new_price < price * 2)
-	if not is_valid:
+        if not is_valid:
             print 'checking price ', price, ' valid : ', is_valid, ' ____ ', new_price
         return is_valid
 
@@ -118,6 +119,8 @@ class StockJob:
     def update_stock_data(self, symbol, price, vol):
         sdmodel = stockdatamodel.StockDataModel()
         sdmodel.update(symbol, price, vol)
+        nqmodel = nqstockdatamodel.NQStockDataModel()
+        nqmodel.update_price(symbol, price)
         return
 
     def get_watch_list(self):

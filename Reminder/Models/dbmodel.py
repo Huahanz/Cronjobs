@@ -6,7 +6,8 @@ class DBModel:
     dbconnection = None
     set_id = False
 
-    def __init__(self, table_name, set_id=False):
+    def __init__(self, set_id=False):
+        self.set_id = set_id
         pass
 
     def get(self, id, offset=None, limit=None):

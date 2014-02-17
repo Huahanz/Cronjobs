@@ -7,7 +7,7 @@ class NasdaqStockModel(DBModel):
     schema = {'id': 'int', 'symbol': 'string', 'pattern': 'string', 'min': 'int', 'max': 'int'}
 
     def __init__(self):
-        DBModel.__init__(self, self.table_name)
+        DBModel.__init__(self, True)
 
     def get(self, id, offset=None, limit=None):
         return DBModel.get(self, id)
