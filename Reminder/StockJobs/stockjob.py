@@ -20,10 +20,10 @@ class StockJob:
     nasdaq_pattern = "qwidget-dollar"
     wc = None
     scm = None
-    enter_time = None    
+    enter_time = None
 
     def __init__(self):
-	self.enter_time = self.get_now()
+        self.enter_time = self.get_now()
         pass
 
     def set_env(self):
@@ -123,7 +123,7 @@ class StockJob:
         sdmodel.update(symbol, price, vol)
         nqmodel = nqstockdatamodel.NQStockDataModel()
         prefix = self.enter_time.strftime("%H:%M:%S")
-	key = symbol + "-" + self.enter_time.strftime("%y-%m-%d")
+        key = symbol + "-" + self.enter_time.strftime("%y-%m-%d")
         nqmodel.update_price(key, {prefix: price})
         return
 
