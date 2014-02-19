@@ -28,3 +28,7 @@ class NasdaqStockModel(DBModel):
             id += (ord(c) - 97)
             id *= 26
         return id
+
+    def reformat(self, stock_obj):
+	stock_obj.symbol = stock.obj.symbol.upper()
+	return self.save(stock_obj)

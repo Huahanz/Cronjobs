@@ -31,7 +31,7 @@ class StockJob:
         weekday = now.weekday()
         if weekday == 5 or weekday == 6:
             print 'market close during weekend'
-            #            sys.exit(0)
+            sys.exit(0)
         premarket_start = now.replace(hour=2, minute=0, second=0, microsecond=0)
         market_open = now.replace(hour=6, minute=30, second=0, microsecond=0)
         market_close = now.replace(hour=13, minute=0, second=0, microsecond=0)
@@ -39,15 +39,15 @@ class StockJob:
         print now, ':',
         if now < premarket_start or now > after_hours_close:
             print 'market not open. exit'
-            #        sys.exit(0)
+            sys.exit(0)
         if now < market_open:
-            print 'using premarket',
+            print 'using premarket'
             self.url_suffix = self.nasdaq_premarket_suffix
         elif now > market_close:
-            print 'using after hours',
+            print 'using after hours'
             self.url_suffix = self.nasdaq_after_hours_suffix
         else:
-            print 'normal hours',
+            print 'normal hours'
 
     def is_price_valid(self, symbol, new_price):
         sdmodel = stockdatamodel.StockDataModel()
@@ -111,8 +111,8 @@ class StockJob:
 
     def check_and_run_earning_calander(self):
         now = self.get_now()
-        if now.hour == 1 and now.minute <= 2:
-            self.run_earning_calander()
+        #if now.hour == 1 and now.minute <= 2:
+        self.run_earning_calander()
 
     def get_now(self):
         time_del = datetime.timedelta(hours=8)
@@ -124,7 +124,7 @@ class StockJob:
         nqmodel = nqstockdatamodel.NQStockDataModel()
         prefix = self.enter_time.strftime("%H:%M:%S")
         key = symbol + "-" + self.enter_time.strftime("%y-%m-%d")
-        nqmodel.update_price(key, {prefix: price})
+        #nqmodel.update_price(key, {prefix: price})
         return
 
     def get_watch_list(self):
@@ -171,6 +171,6 @@ class StockJob:
 
 
 sj = StockJob()
-sj.run_by_watch_list()
+#sj.run_by_watch_list()
 sj.check_and_run_earning_calander()
 print '======================='
