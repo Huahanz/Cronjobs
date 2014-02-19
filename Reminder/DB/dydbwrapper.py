@@ -82,7 +82,7 @@ class DYDBWrapper:
         return True
 
     def enqueue_batch_writes(self, table_name, key, item):
-        print 'enqueue ', table_name, ', ', item
+        #print 'enqueue ', table_name, ', ', item
         if table_name not in self.write_queue:
             self.write_queue[table_name] = {}
         if key not in self.write_queue[table_name]:
@@ -90,7 +90,7 @@ class DYDBWrapper:
         self.write_queue[table_name][key].append(item)
 
     def flush_batch_writes(self):
-        print 'flushing '
+        #print 'flushing '
         self.connect()
         batch_item_list = self.__group_batch_items()
         self.__send_batch(batch_item_list)

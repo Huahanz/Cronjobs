@@ -15,8 +15,8 @@ class WebCrawler:
         web_content = self.craw_url(url)
         if web_content and pattern:
             p = re.compile(pattern)
-            for m in p.finditer(str):
-                match = str[m.start():m.end()]
+            for m in p.finditer(web_content):
+                match = web_content[m.start():m.end()]
                 if match:
                     return match
         return None
