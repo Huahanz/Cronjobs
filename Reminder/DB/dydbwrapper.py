@@ -14,14 +14,33 @@ class DYDBWrapper:
         self.region = region
         atexit.register(self.flush_batch_writes)
 
-    def connet(self):
+    def connect(self):
         if not self.conn:
             self.conn = boto.dynamodb.connect_to_region(self.region)
+
+    def create_table_hash(self, table_name, hash_key):
+        if not table_name:
+            return None
+        self.connect()
+        try:
+            table = self.conn.get_table(table_name)
+        except:
+            message_table_schema = self.conn.create_schema(
+                hash_key_name=hash_key,
+                hash_key_proto_value=str,
+            )
+            table = self.conn.create_table(
+                name=table_name,
+                schema=message_table_schema,
+                read_units=10,
+                write_units=10
+            )
+        return table
 
     def select(self, table_name, key):
         if not key or not table_name:
             return None
-        self.connet()
+        self.connect()
         table = self.conn.get_table(table_name)
         if not table:
             return None
@@ -34,7 +53,7 @@ class DYDBWrapper:
     def delete(self, table_name, key):
         if not key or not table_name:
             return False
-        self.connet()
+        self.connect()
         table = self.conn.get_table(table_name)
         if not table:
             return False
@@ -54,7 +73,7 @@ class DYDBWrapper:
     def insert(self, table_name, key, item_data):
         if not item_data or not table_name:
             return False
-        self.connet()
+        self.connect()
         table = self.conn.get_table(table_name)
         if not table:
             return False
@@ -72,7 +91,7 @@ class DYDBWrapper:
 
     def flush_batch_writes(self):
         print 'flushing '
-        self.connet()
+        self.connect()
         batch_item_list = self.__group_batch_items()
         self.__send_batch(batch_item_list)
 
@@ -108,7 +127,8 @@ class DYDBWrapper:
                 batch_list = self.conn.new_batch_write_list()
 
 # dy = DYDBWrapper()
-# tb_name = 'nq_stock_price_data'
+# tb_name = 'nq_stock_price_data_123'
+# print dy.create_table_hash(tb_name, 'idd')
 # dy.insert(tb_name, 'LNKD99', {'symbol': 'LNKD99', 'price': 1129.1})
 # print '1 : ', dy.select(tb_name, 'LNKD99')
 # dy.insert('test', 'LNKD99', {'id': 'LNKD99', 'price': 14.1})
