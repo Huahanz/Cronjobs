@@ -4,8 +4,13 @@ from Reminder.Models.dbmodel import DBModel
 
 class NasdaqStockModel(DBModel):
     table_name = 'stocks'
-    schema = {'id': 'int', 'symbol': 'string', 'pattern': 'string', 'min': 'int', 'max': 'int'}
-
+    schema = [
+        ['id', 'int'],
+        ['symbol', 'string'],
+        ['pattern', 'string'],
+        ['min', 'int'],
+        ['max', 'int'],
+    ]
     def __init__(self):
         DBModel.__init__(self, True)
 
@@ -29,6 +34,16 @@ class NasdaqStockModel(DBModel):
             id *= 26
         return id
 
-    def reformat(self, stock_obj):
-	stock_obj.symbol = stock.obj.symbol.upper()
-	return self.save(stock_obj)
+    def reformat(self, stock_set):
+	print 'reformating'
+	if not isinstance(stock_set, basestring):
+	    for	stock_obj in stock_set:
+		self.__reformat(stock_obj)
+	else:
+	    self.__reformat(stock_set)
+
+    def __reformat(self, stock_obj):
+	self.delete(stock_obj.id)
+	stock_obj.symbol = stock_obj.symbol.upper()
+	stock_obj.id = self.generate_id(stock_obj.symbol)
+        return self.save(stock_obj)
