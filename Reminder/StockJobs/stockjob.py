@@ -75,7 +75,7 @@ class StockJob:
                 em.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123',
                                                       'alert', self.body)
 
-    def run_earning_calander(self):
+    def __run_earning_calander(self):
         ec_url_prefix = 'http://biz.yahoo.com/research/earncal/'
         now = self.get_now()
         ec_url_date = self.date_format_pad_zero(now.year) + self.date_format_pad_zero(
@@ -96,6 +96,27 @@ class StockJob:
         if match_list:
             self.body += 'Earning report found : '
             self.body = self.body.join(match_list)
+            self.wrap_and_send_email()
+
+
+    def run_earning_calander(self):
+        ec_url_prefix = 'http://biz.yahoo.com/research/earncal/'
+        now = self.get_now()
+        ec_url_date = self.date_format_pad_zero(now.year) + self.date_format_pad_zero(
+            now.month) + self.date_format_pad_zero(now.day)
+        url = ec_url_prefix + ec_url_date + '.html'
+        pattern = "finance.yahoo.com\/q\?s="
+        print 'url' + url
+        wc = webcrawler.WebCrawler()
+        stock_list = self.get_watch_list()
+        match_list = []
+        for symbol in stock_list:
+            symbol = self.get_earning_calander_reg(symbol)
+            match_list.append(symbol)
+        matches = wc.search_pattern_follow_exact_match_list(url, pattern, match_list)
+        if matches:
+            self.body += 'Earning report found : '
+            self.body = self.body.join(matches)
             self.wrap_and_send_email()
 
     def date_format_pad_zero(self, val):

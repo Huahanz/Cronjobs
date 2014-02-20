@@ -33,6 +33,17 @@ class WebCrawler:
                     return match
         return None
 
+    def search_pattern_follow_exact_match_list(self, url, pattern, match_list):
+        web_content = self.craw_url(url)
+        rets = []
+        if web_content and pattern:
+            p = re.compile(pattern)
+            for m in p.finditer(web_content):
+                match = self.__find_reg_list(web_content, m.start() + len(pattern), reg_list)
+                if match:
+                    rets.append(match[1:])
+        return rets
+
     def search_pattern_follow_reg_list(self, url, pattern, reg_list):
         web_content = self.craw_url(url)
         rets = []
@@ -52,6 +63,22 @@ class WebCrawler:
             match = str[m.start():m.end()]
             if match:
                 return match
+        return None
+
+    def __find_match_list(self, web_content, start_index, match_list):
+        for match in match_list:
+            does_match = self.__find_match(web_content, start_index, match)
+            if does_match:
+                return does_match
+
+    def __find_match(self, web_content, start_index, to_match):
+        str = web_content[start_index:]
+        #print 'rr ', reg, str[:100]
+        p = re.compile(to_match)
+        for m in p.finditer(str):
+            match = str[m.start():m.end()]
+            if match:
+                return (match == to_match)
         return None
 
     def __find_reg_list(self, web_content, start_index, reg_list):
