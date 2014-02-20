@@ -39,7 +39,7 @@ class WebCrawler:
         if web_content and pattern:
             p = re.compile(pattern)
             for m in p.finditer(web_content):
-                match = self.__find_reg_list(web_content, m.start() + len(pattern), reg_list)
+                match = self.__find_match_list(web_content, m.start() + len(pattern), match_list)
                 if match:
                     rets.append(match[1:])
         return rets
@@ -77,8 +77,8 @@ class WebCrawler:
         p = re.compile(to_match)
         for m in p.finditer(str):
             match = str[m.start():m.end()]
-            if match:
-                return (match == to_match)
+            if match and (match == to_match):
+                return match
         return None
 
     def __find_reg_list(self, web_content, start_index, reg_list):
