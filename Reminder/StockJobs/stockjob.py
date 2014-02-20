@@ -88,14 +88,14 @@ class StockJob:
         match_list = []
         for symbol in stock_list:
             symbol = self.get_earning_calander_reg(symbol)
-            pattern = symbol
+            pattern = "[\b\>]" + symbol + "[\b\<]"
             does_match = wc.search_pattern(url, pattern)
             if does_match:
-                match_list.append(pattern)
+                match_list.append(symbol)
 
         if match_list:
             self.body += 'Earning report found : '
-            self.body = self.body.join(match_list)
+            self.body += self.body.join(match_list)
             self.wrap_and_send_email()
 
 
@@ -114,7 +114,9 @@ class StockJob:
             symbol = self.get_earning_calander_reg(symbol)
             match_list.append(symbol)
         matches = wc.search_pattern_follow_exact_match_list(url, pattern, match_list)
+	print 'matchs', matches
         if matches:
+	    print 'body', self.body
             self.body += 'Earning report found : '
             self.body = self.body.join(matches)
             self.wrap_and_send_email()
@@ -132,8 +134,8 @@ class StockJob:
 
     def check_and_run_earning_calander(self):
         now = self.get_now()
-        #if now.hour == 1 and now.minute <= 2:
-        self.run_earning_calander()
+        if now.minute == 1:
+            self.__run_earning_calander()
 
     def get_now(self):
         time_del = datetime.timedelta(hours=8)
@@ -192,6 +194,6 @@ class StockJob:
 
 
 sj = StockJob()
-#sj.run_by_watch_list()
+sj.run_by_watch_list()
 sj.check_and_run_earning_calander()
 print '======================='

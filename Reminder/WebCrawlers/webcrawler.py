@@ -41,7 +41,7 @@ class WebCrawler:
             for m in p.finditer(web_content):
                 match = self.__find_match_list(web_content, m.start() + len(pattern), match_list)
                 if match:
-                    rets.append(match[1:])
+                    rets.append(match)
         return rets
 
     def search_pattern_follow_reg_list(self, url, pattern, reg_list):
