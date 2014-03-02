@@ -94,22 +94,24 @@ class StockJob:
             start_date.month) + self.date_format_pad_zero(start_date.day)
         url = ec_url_prefix + ec_url_date + '.html'
         # pattern = "finance.yahoo.com\/q\?s="
-        print 'url' + url
+        print 'url ' + url
         wc = webcrawler.WebCrawler()
         stock_list = self.get_watch_list()
-        match_list = []
+        match_dict = {}
         for symbol in stock_list:
             symbol = self.get_earning_calander_reg(symbol)
             pattern = "[\b\>]" + symbol + "[\b\<]"
-            does_match = wc.search_pattern(url, pattern)
-            #does_match = wc.search_pattern_follow_reg(url, pattern, "\<small\>^[A-Za-z0-9_-]*$")
+            #does_match = wc.search_pattern(url, pattern)
+	    other_info_pattern = "\<small\>[\s\w\:]*\<"
+            does_match = wc.search_pattern_follow_reg(url, pattern, other_info_pattern)
             if does_match:
-                match_list.append(symbol)
+                match_dict[symbol] = does_match
 
-        if match_list:
-            self.body += 'Earning report found : '
-            self.body += self.body.join(match_list)
-	    self.body += """\r\n"""
+        if match_dict:
+	    for k, v in match_dict.items():
+                self.body += ec_url_date + ' : ' + str(start_date.weekday() + 1) + ' :  Earning report found : '
+                self.body += k + " : " +  v[6:-1]
+	        self.body += """ \r\n"""
 	    self.earning_report = True
 
     def run_earning_calander(self, start_date):
@@ -206,8 +208,9 @@ class StockJob:
         print msg
 
 sj = StockJob()
-#if sys.argv[1]:
-#     print sys.argv[0], sys.argv[1]
+if len(sys.argv) >= 2:
+    sj.TEST_MODE = True
+    sj.EARNING_REPORT_RANGE = 3
 sj.run_by_watch_list()
 sj.check_and_run_earning_calander()
 sj.wrap_and_send_email()
