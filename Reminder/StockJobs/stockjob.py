@@ -6,7 +6,6 @@ from Reminder.Models import nqstockdatamodel
 from random import randint
 from threading import Thread
 from time import sleep
-
 import datetime
 import sys
 
@@ -16,11 +15,16 @@ class StockJob:
     nasdaq_after_hours_suffix = '/after-hours'
     nasdaq_premarket_suffix = '/premarket'
     body = ""
+    earning_report = False
+    stock_alert = False
     url_suffix = ""
     nasdaq_pattern = "qwidget-dollar"
     wc = None
     scm = None
     enter_time = None
+    TEST_MODE = False
+    EARNING_REPORT_RANGE = 7
+    TEXT_THRESHOLD = 1
 
     def __init__(self):
         self.enter_time = self.get_now()
@@ -31,7 +35,8 @@ class StockJob:
         weekday = now.weekday()
         if weekday == 5 or weekday == 6:
             print 'market close during weekend'
-            sys.exit(0)
+	    if not self.TEST_MODE:
+                sys.exit(0)
         premarket_start = now.replace(hour=2, minute=0, second=0, microsecond=0)
         market_open = now.replace(hour=6, minute=30, second=0, microsecond=0)
         market_close = now.replace(hour=13, minute=0, second=0, microsecond=0)
@@ -39,7 +44,8 @@ class StockJob:
         print now, ':',
         if now < premarket_start or now > after_hours_close:
             print 'market not open. exit'
-            sys.exit(0)
+	    if not self.TEST_MODE:
+                sys.exit(0)
         if now < market_open:
             print 'using premarket'
             self.url_suffix = self.nasdaq_premarket_suffix
@@ -69,17 +75,23 @@ class StockJob:
     def wrap_and_send_email(self):
         if len(self.body) > 0:
             em = emailmanager.EmailManager()
-            em.send_to_defaults('Stock Alert', self.body)
-            num = randint(1, 100)
-            if num < 33:
-                em.send_email_to_single_address_gmail('6509317719@tmomail.com', 'huahanzh@gmail.com', 'testemail123',
-                                                      'alert', self.body)
+	    title = "Stock Msg"
+	    if self.earning_report and self.stock_alert:
+		title = "Earning Report AND Stock Alert"
+	    elif self.earning_report:
+		title = "Earning Report"
+	    elif self.stock_alert:
+		title = "Stock Alert"
 
-    def __run_earning_calander(self):
+            em.send_to_defaults(title, self.body)
+            num = randint(1, 100)
+            if num < self.TEXT_THRESHOLD:
+		em.send_text_by_defaults(title, self.body)
+
+    def __run_earning_calander(self, start_date):
         ec_url_prefix = 'http://biz.yahoo.com/research/earncal/'
-        now = self.get_now()
-        ec_url_date = self.date_format_pad_zero(now.year) + self.date_format_pad_zero(
-            now.month) + self.date_format_pad_zero(now.day)
+        ec_url_date = self.date_format_pad_zero(start_date.year) + self.date_format_pad_zero(
+            start_date.month) + self.date_format_pad_zero(start_date.day)
         url = ec_url_prefix + ec_url_date + '.html'
         # pattern = "finance.yahoo.com\/q\?s="
         print 'url' + url
@@ -90,20 +102,20 @@ class StockJob:
             symbol = self.get_earning_calander_reg(symbol)
             pattern = "[\b\>]" + symbol + "[\b\<]"
             does_match = wc.search_pattern(url, pattern)
+            #does_match = wc.search_pattern_follow_reg(url, pattern, "\<small\>^[A-Za-z0-9_-]*$")
             if does_match:
                 match_list.append(symbol)
 
         if match_list:
             self.body += 'Earning report found : '
             self.body += self.body.join(match_list)
-            self.wrap_and_send_email()
+	    self.body += """\r\n"""
+	    self.earning_report = True
 
-
-    def run_earning_calander(self):
+    def run_earning_calander(self, start_date):
         ec_url_prefix = 'http://biz.yahoo.com/research/earncal/'
-        now = self.get_now()
-        ec_url_date = self.date_format_pad_zero(now.year) + self.date_format_pad_zero(
-            now.month) + self.date_format_pad_zero(now.day)
+        ec_url_date = self.date_format_pad_zero(start_date.year) + self.date_format_pad_zero(
+            start_date.month) + self.date_format_pad_zero(start_date.day)
         url = ec_url_prefix + ec_url_date + '.html'
         pattern = "finance.yahoo.com\/q\?s="
         print 'url' + url
@@ -119,7 +131,6 @@ class StockJob:
 	    print 'body', self.body
             self.body += 'Earning report found : '
             self.body = self.body.join(matches)
-            self.wrap_and_send_email()
 
     def date_format_pad_zero(self, val):
         if val <= 0:
@@ -134,8 +145,11 @@ class StockJob:
 
     def check_and_run_earning_calander(self):
         now = self.get_now()
-        if now.minute == 1:
-            self.__run_earning_calander()
+        if self.TEST_MODE or now.minute == 1:
+	    start_date = self.get_now()
+	    for i in range(0, self.EARNING_REPORT_RANGE):
+                self.__run_earning_calander(start_date)
+		start_date += datetime.timedelta(1)
 
     def get_now(self):
         time_del = datetime.timedelta(hours=8)
@@ -155,7 +169,7 @@ class StockJob:
                 'RAD', 'RENN', 'SOL', 'RSOL', 'PSX', 'OXY', 'NOK', 'NFLX', 'NBG', 'NQ', 'MCP', 'MPO', 'MCK',
                 'MNKD', 'JASO', 'JCP', 'HZNP', 'HIMX', 'GOOG', 'GE', 'GME', 'FRO', 'FSLR', 'FNMA', 'FMCC', 'FB', 'DANG',
                 'DRYS', 'SID', 'BBRY', 'BIDU', 'ABIO', 'AAPL', 'AMGN', 'AGNC', 'APP', 'AMZN', 'ANR', 'AMD', 'AVTC',
-                'WUBA']
+                'WUBA', 'VNET', 'JOBS', 'CYOU', 'CNTF', 'EFUT', 'KONE', 'NINE', 'PACT', 'SINA', 'SOHU', 'GOMO', 'YY']
 
     def run_by_watch_list(self):
         self.set_env()
@@ -171,8 +185,6 @@ class StockJob:
         for thread in threads:
             thread.join()
 
-        self.wrap_and_send_email()
-
     def run(self, symbol):
         sleep(0.2)
         msg = unicode(self.get_now()) + ":"
@@ -183,6 +195,7 @@ class StockJob:
             self.update_stock_data(symbol, result, 0)
             if self.is_price_valid(symbol, result):
                 if self.scm.does_meet_nasdaq(symbol, result):
+		    self.stock_alert = True
                     self.body += 'symbol : ' + symbol + ' : price : ' + result + '<br>'
                     msg += ':SEND_EMAIL:' + symbol.upper() + ':' + result
                     print msg
@@ -192,8 +205,10 @@ class StockJob:
             msg += 'wrong web ' + symbol
         print msg
 
-
 sj = StockJob()
+#if sys.argv[1]:
+#     print sys.argv[0], sys.argv[1]
 sj.run_by_watch_list()
 sj.check_and_run_earning_calander()
+sj.wrap_and_send_email()
 print '======================='

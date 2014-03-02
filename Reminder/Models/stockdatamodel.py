@@ -14,6 +14,7 @@ class StockDataModel(DBModel):
         ['price_data', 'string'],
     ]
 
+    ANALYSIS_PRICE_DATA = False
     json_field = 'price_data'
 
     def __init__(self):
@@ -32,9 +33,10 @@ class StockDataModel(DBModel):
         if obj:
             if not isinstance(obj, basestring):
                 obj = obj[0]
-            if not obj.price_data:
-                obj.price_data = []
-            obj.price_data.append(price)
+	    if self.ANALYSIS_PRICE_DATA:
+                if not obj.price_data:
+                    obj.price_data = []
+                obj.price_data.append(price)
             obj.vol = vol
             obj.price = price
         else:

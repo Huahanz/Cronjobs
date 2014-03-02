@@ -21,13 +21,13 @@ class WebCrawler:
                     return match
         return None
 
-    def search_pattern_follow_reg(self, url, pattern, reg):
+    def search_pattern_follow_reg(self, url, pattern, reg, limit=100):
         web_content = self.craw_url(url)
         if web_content and pattern:
             p = re.compile(pattern)
             for m in p.finditer(web_content):
                 #price = self.__find_price(web_content, m.start() + len(pattern))
-                match = self.__find_reg(web_content, m.start() + len(pattern), reg)
+                match = self.__find_reg(web_content, m.start() + len(pattern), reg, limit)
                 if match:
                     match = match[1:]
                     return match
@@ -55,8 +55,8 @@ class WebCrawler:
                     rets.append(match[1:])
         return rets
 
-    def __find_reg(self, web_content, start_index, reg):
-        str = web_content[start_index:]
+    def __find_reg(self, web_content, start_index, reg, limit=100):
+        str = web_content[start_index:start_index+limit]
         #print 'rr ', reg, str[:100]
         p = re.compile(reg)
         for m in p.finditer(str):
@@ -127,6 +127,6 @@ class WebCrawler:
                 print 'no match'
                 return
 
-#wc = WebCrawler("http://www.nasdaq.com/symbol/yhoo", "qwidget-dollar")
+#wc = webcrawler.WebCrawler()
 #print wc.search_pattern()
 #wc.test("@   \">$34.96</div>", "\$[0123456789.]*")

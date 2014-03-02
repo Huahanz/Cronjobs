@@ -31,12 +31,20 @@ class EmailManager:
         except:
             print 'Email failed login'
             return
-        header = 'To:' + to_addr + '\n' + 'From: ' + gmail_user + '\n' + subject + ' \n'
+        header = 'To:' + to_addr + '\n' + 'From: ' + gmail_user + '\n' + " Subject: " + subject + ' \n' + "Content-Type: text/html\n"
         msg = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (gmail_user, to_addr, subject, body)
         #        print msg
         smtpserver.sendmail(gmail_user, to_addr, msg)
         print 'done!'
         smtpserver.close()
+
+    def send_text_by_defaults(self, subject, body):
+	ep = EmailPool.EmailPool()
+        sender = ep.get_email_sender()
+        account = sender[0]
+        pwd = sender[1]
+	print 'send text'
+	return self.send_email_to_single_address_gmail('6509317719@tmomail.net', account, pwd, subject, body)	
 
     def send_to_defaults(self, subject, body):
         #self.send_email_to_single_address_gmail('nasdaqstock.cronjobs@gmail.com', 'nasdaqstock.cronjobs@gmail.com', 'testemail123', subject, body)
@@ -54,3 +62,4 @@ class EmailManager:
 
 #em = EmailManager()
 #em.send_email_to_single_address_gmail('6509317719@tmomail.net', 'huahanzh@gmail.com', 'testemail123', 'test', 'isss body')
+#em.send_text_by_defaults('test', 'sss')
