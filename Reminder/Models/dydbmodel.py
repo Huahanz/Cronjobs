@@ -1,5 +1,6 @@
 from Reminder.DB.dydbwrapper import DYDBWrapper
 
+
 class DYDBModel:
     dydbw = DYDBWrapper()
 

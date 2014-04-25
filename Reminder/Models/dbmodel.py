@@ -39,13 +39,13 @@ class DBModel:
         return
 
     def delete(self, id):
-	if id:
-	    cmd = 'DELETE FROM ' + self.table_name + ' WHERE id = ' + id + ';'
-	    if not DBModel.dbconnection:
+        if id:
+            cmd = 'DELETE FROM ' + self.table_name + ' WHERE id = ' + id + ';'
+            if not DBModel.dbconnection:
                 DBModel.dbconnection = DBWrapper()
             ret = DBModel.dbconnection.delete(cmd)
-	    return ret
-	return None
+            return ret
+        return None
 
     def add(self, obj):
         data = self.wrap_to_sql_insert_data(obj)
