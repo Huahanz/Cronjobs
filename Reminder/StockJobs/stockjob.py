@@ -23,7 +23,7 @@ class StockJob:
     scm = None
     enter_time = None
     TEST_MODE = False
-    EARNING_REPORT_RANGE = 7
+    EARNING_REPORT_RANGE = 13
     TEXT_THRESHOLD = 1
 
     def __init__(self):
@@ -210,7 +210,9 @@ class StockJob:
 sj = StockJob()
 if len(sys.argv) >= 2:
     sj.TEST_MODE = True
-    sj.EARNING_REPORT_RANGE = 3
+    sj.EARNING_REPORT_RANGE = 7
+if len(sys.argv) >= 3:
+   sj.EARNING_REPORT_RANGE = 18
 sj.run_by_watch_list()
 sj.check_and_run_earning_calander()
 sj.wrap_and_send_email()
