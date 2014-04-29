@@ -56,7 +56,7 @@ class WebCrawler:
         return rets
 
     def __find_reg(self, web_content, start_index, reg, limit=100):
-        str = web_content[start_index:start_index+limit]
+        str = web_content[start_index:start_index + limit]
         #print 'rr ', reg, str, '   ', reg
         p = re.compile(reg)
         for m in p.finditer(str):

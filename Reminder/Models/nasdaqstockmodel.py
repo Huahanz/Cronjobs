@@ -11,6 +11,7 @@ class NasdaqStockModel(DBModel):
         ['min', 'int'],
         ['max', 'int'],
     ]
+
     def __init__(self):
         DBModel.__init__(self, True)
 
@@ -35,15 +36,15 @@ class NasdaqStockModel(DBModel):
         return id
 
     def reformat(self, stock_set):
-	print 'reformating'
-	if not isinstance(stock_set, basestring):
-	    for	stock_obj in stock_set:
-		self.__reformat(stock_obj)
-	else:
-	    self.__reformat(stock_set)
+        print 'reformating'
+        if not isinstance(stock_set, basestring):
+            for stock_obj in stock_set:
+                self.__reformat(stock_obj)
+        else:
+            self.__reformat(stock_set)
 
     def __reformat(self, stock_obj):
-	self.delete(stock_obj.id)
-	stock_obj.symbol = stock_obj.symbol.upper()
-	stock_obj.id = self.generate_id(stock_obj.symbol)
+        self.delete(stock_obj.id)
+        stock_obj.symbol = stock_obj.symbol.upper()
+        stock_obj.id = self.generate_id(stock_obj.symbol)
         return self.save(stock_obj)

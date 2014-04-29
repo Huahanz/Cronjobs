@@ -15,12 +15,12 @@ class StockConditionManager(conditionmanager.ConditionManager):
             if stock_obj:
                 nm.reformat(stock_obj)
         if stock_obj:
-	    if not isinstance(stock_obj, basestring):
-		stock_obj = stock_obj[0]
+            if not isinstance(stock_obj, basestring):
+                stock_obj = stock_obj[0]
             return self.does_basic_match(price, stock_obj.min, stock_obj.max)
         return False
 
     def does_basic_match(self, price, min, max):
-        return conditionmanager.ConditionManager.is_larger_than(self,price,
+        return conditionmanager.ConditionManager.is_larger_than(self, price,
                                                                 max) or conditionmanager.ConditionManager.is_lower_than(
             self, price, min)

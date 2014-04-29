@@ -33,7 +33,7 @@ class StockDataModel(DBModel):
         if obj:
             if not isinstance(obj, basestring):
                 obj = obj[0]
-	    if self.ANALYSIS_PRICE_DATA:
+            if self.ANALYSIS_PRICE_DATA:
                 if not obj.price_data:
                     obj.price_data = []
                 obj.price_data.append(price)

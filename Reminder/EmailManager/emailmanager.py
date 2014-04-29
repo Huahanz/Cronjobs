@@ -39,12 +39,12 @@ class EmailManager:
         smtpserver.close()
 
     def send_text_by_defaults(self, subject, body):
-	ep = EmailPool.EmailPool()
+        ep = EmailPool.EmailPool()
         sender = ep.get_email_sender()
         account = sender[0]
         pwd = sender[1]
-	print 'send text'
-	return self.send_email_to_single_address_gmail('6509317719@tmomail.net', account, pwd, subject, body)	
+        print 'send text'
+        return self.send_email_to_single_address_gmail('6509317719@tmomail.net', account, pwd, subject, body)
 
     def send_to_defaults(self, subject, body):
         #self.send_email_to_single_address_gmail('nasdaqstock.cronjobs@gmail.com', 'nasdaqstock.cronjobs@gmail.com', 'testemail123', subject, body)
