@@ -33,5 +33,5 @@ class MTStateBasedModel(DBModel):
         pass
 
 sd = MTStateBasedModel()
-ox = sd.get('www.test.com')
+ox = sd.get('http://www.mitbbs.com/mitbbs_bbsbfind.php?board=JobHunting')
 print ''.join(sd.get(ox))

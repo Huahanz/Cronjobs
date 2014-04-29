@@ -11,6 +11,7 @@ class DBWrapper:
                              passwd="1234",
                              db="mt")
         dbcur = db.cursor()
+	print '1123', cmd
         dbcur.execute(cmd)
         ret = dbcur.fetchall()
         db.close()
