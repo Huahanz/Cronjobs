@@ -1,11 +1,11 @@
-from Reminder.Models.dbmodel import DBModel
 from Reminder.Models.MTStateBasedData import MTStateBasedData
+from Reminder.Models.dbmodel import DBModel
 import json
 
 class MTStateBasedModel(DBModel):
     table_name = 'mt_state_based'
     schema = [
-        ['url', 'string'],
+        ['id', 'string'],
         ['state', 'long'],
         ['state_extension', 'string'],
         ['start_pattern', 'string'],
@@ -28,6 +28,9 @@ class MTStateBasedModel(DBModel):
 
     def wrap_to_data(self, obj):
         return obj
+
+    def save(self, obj):
+        pass
 
 sd = MTStateBasedModel()
 ox = sd.get('www.test.com')
