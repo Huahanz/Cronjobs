@@ -168,7 +168,7 @@ class StockJob:
 
     def get_watch_list(self):
         return ['TSLA', 'YHOO', 'MSFT', 'LNKD', 'BAC', 'ATVI', 'TWTR', 'YELP', 'ZNGA', 'STEM', 'SCTY', 'RMTI',
-                'RAD', 'RENN', 'SOL', 'RSOL', 'PSX', 'OXY', 'NOK', 'NFLX', 'NBG', 'NQ', 'MCP', 'MPO', 'MCK',
+                'RAD', 'RENN', 'SOL', 'RSOL', 'PSX', 'OXY', 'GOGO', 'LIVE', 'PLUG', 'WB', 'YOKU', 'NMBL', 'VJET', 'JNUG', 'SPY', 'NOK', 'NFLX', 'NBG', 'NQ', 'MCP', 'MPO', 'MCK',
                 'MNKD', 'JASO', 'JCP', 'HZNP', 'HIMX', 'GOOG', 'GE', 'GME', 'FRO', 'FSLR', 'FNMA', 'FMCC', 'FB', 'DANG',
                 'DRYS', 'SID', 'BBRY', 'BIDU', 'ABIO', 'AAPL', 'AMGN', 'AGNC', 'APP', 'AMZN', 'ANR', 'AMD', 'AVTC',
                 'WUBA', 'VNET', 'JOBS', 'CYOU', 'CNTF', 'EFUT', 'KONE', 'NINE', 'PACT', 'SINA', 'SOHU', 'GOMO', 'YY']
