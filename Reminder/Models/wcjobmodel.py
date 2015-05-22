@@ -14,7 +14,7 @@ class WCJobModel(DBModel):
     ]
 
     def __init__(self):
-        DBModel.__init__(self, True)
+        DBModel.__init__(self, False)
 
     def get(self, id, offset=None, limit=None):
         return DBModel.get(self, id)
@@ -23,4 +23,6 @@ class WCJobModel(DBModel):
         if len(data) != len(self.schema):
             print 'invalid data format'
             return None
-        return WCJob(data[0], data[1], data[2], data[3], data[4])
+	print "123"
+	print data
+        return WCJob(data[0], data[1], data[2], data[3], data[4], data[5])
