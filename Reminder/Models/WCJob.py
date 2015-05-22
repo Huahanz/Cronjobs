@@ -11,7 +11,7 @@ class WCJob(BaseObject.BaseObject):
 
     def __init__(self, id, url, pattern, patternCount, wctype, uuid):
         self.id = id
-        self.symbol = url
+        self.url = url
         self.pattern = pattern
         self.patternCount = patternCount
         self.wctype = wctype
