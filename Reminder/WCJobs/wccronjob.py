@@ -38,7 +38,7 @@ class WCCronJob:
         sleep(0.2)
         msg = unicode(self.get_now()) + ":"
         url = wj.url
-        result = self.wc.search_pattern(url, self.nasdaq_pattern)
+        result = self.wc.search_pattern(url, wj.pattern)
         if result:
             msg += 'Found' + url + ':' + result
         else:
