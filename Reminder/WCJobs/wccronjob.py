@@ -13,7 +13,7 @@ class WCCronJob:
     def __init__(self):
         self.enter_time = self.get_now()
         self.wc = webcrawler.WebCrawler()
-        self.apns = APNs(use_sandbox=True, cert_file='LocalTestCert.pem', key_file='LocalTestKeyNP.pem')
+	self.apns = APNs(use_sandbox=True, cert_file='/home/ec2-user/LocalTestCert.pem', key_file='/home/ec2-user/LocalTestKeyNP.pem')
 
         # Send a notification
         # token_hex = 'd6915bfdc113c048a04666f61b733916ec23ef6db0c0b2c1081ec9f721df8c33'
@@ -62,13 +62,26 @@ class WCCronJob:
 
         for thread in threads:
             thread.join()
+	print 'joined all threads'
         self.apns.gateway_server.send_notification_multiple(self.frame)
 
     def add_to_push_notification(self, device_token, payload):
+	print 'added pn '
         self.frame.add_item(device_token, payload, self.identifier, self.expiry,
                             self.priority)
 
+    def test_single_push_notification(self):
+	token_hex = 'd6915bfdc113c048a04666f61b733916ec23ef6db0c0b2c1081ec9f721df8c33'
+	payload = Payload(alert="Hello World!", sound="default", badge=1)
+	self.apns.gateway_server.send_notification(token_hex, payload)
+	print 'done test'
+
+    def test_multiple_pn(self):
+	payload = Payload(alert="Hello World!", sound="default", badge=1)
+	self.frame.add_item('d6915bfdc113c048a04666f61b733916ec23ef6db0c0b2c1081ec9f721df8c33', payload, self.identifier, self.expiry, self.priority)
+	self.apns.gateway_server.send_notification_multiple(self.frame)
 
 wc = WCCronJob()
-wc.run_by_list()
+wc.test_multiple_pn()
+#wc.run_by_list()
 print '======================='
