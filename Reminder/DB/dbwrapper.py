@@ -9,7 +9,7 @@ class DBWrapper:
         db = MySQLdb.connect(host="localhost",
                              user="root",
                              passwd="1234",
-                             db="stock")
+                             db="wc")
         dbcur = db.cursor()
         dbcur.execute(cmd)
         ret = dbcur.fetchall()
@@ -23,7 +23,7 @@ class DBWrapper:
         db = MySQLdb.connect(host="localhost",
                              user="root",
                              passwd="1234",
-                             db="stock")
+                             db="wc")
         dbcur = db.cursor()
         dbcur.execute(cmd)
         db.commit()
