@@ -171,7 +171,7 @@ class StockJob:
                 'RAD', 'RENN', 'SOL', 'RSOL', 'PSX', 'OXY', 'GOGO', 'LIVE', 'PLUG', 'WB', 'YOKU', 'NMBL', 'VJET', 'JNUG', 'SPY', 'NOK', 'NFLX', 'NBG', 'NQ', 'MCP', 'MPO', 'MCK',
                 'MNKD', 'JASO', 'JCP', 'HZNP', 'HIMX', 'GOOG', 'GE', 'GME', 'FRO', 'FSLR', 'FNMA', 'FMCC', 'FB', 'DANG',
                 'DRYS', 'SID', 'BBRY', 'BIDU', 'ABIO', 'AAPL', 'AMGN', 'AGNC', 'APP', 'AMZN', 'ANR', 'AMD', 'AVTC',
-                'WUBA', 'VNET', 'JOBS', 'CYOU', 'CNTF', 'EFUT', 'KONE', 'NINE', 'PACT', 'SINA', 'SOHU', 'GOMO', 'YY']
+                'WUBA', 'VNET', 'JOBS', 'CYOU', 'CNTF', 'EFUT', 'KONE', 'NINE', 'PACT', 'SINA', 'SOHU', 'GOMO', 'YY', 'KING', 'CMGE', 'PWRD', 'QIHU', 'QUNR','XNET', 'KNDI','BABA','JD']
 
     def run_by_watch_list(self):
         self.set_env()

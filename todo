@@ -1,0 +1,10 @@
+====07252014
+0, move pwd to env
+1, monitor mitbbs post
+2, filter earning calander by vol
+3, grad history graph on earning report day
+
+====long time ago
+1, priority based notification. 
+2, suport float number
+3, consider the case that nasdql.com upgrade or down

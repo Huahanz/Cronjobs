@@ -19,7 +19,6 @@ class WCCronJob:
     # TEXT_THRESHOLD = 1
     #
     def __init__(self):
-        self.enter_time = self.get_now()
         pass
 
     def set_env(self):

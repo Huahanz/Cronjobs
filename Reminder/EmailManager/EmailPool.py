@@ -12,6 +12,6 @@ class EmailPool:
 
     def get_all_email_sender(self):
         all_list = []
-        all_list.append(['huahanzh@gmail.com', 'testemail123'])
+        all_list.append(['huahanzh@gmail.com', 'pass'])
         #        all_list.append(['nasdaqstock.cronjobs@gmail.com', 'emailtest012'])
         return all_list

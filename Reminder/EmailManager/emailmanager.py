@@ -59,7 +59,3 @@ class EmailManager:
         pwd = sender[1]
         return self.send_email_to_single_address_gmail('huahanzh@gmail.com', account, pwd, subject,
                                                        body)
-
-#em = EmailManager()
-#em.send_email_to_single_address_gmail('6509317719@tmomail.net', 'huahanzh@gmail.com', 'testemail123', 'test', 'isss body')
-#em.send_text_by_defaults('test', 'sss')
